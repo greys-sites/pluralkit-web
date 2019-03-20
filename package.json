@@ -8,5 +8,8 @@
     "form-data": "2.3.3",
     "cookie-parser": "1.4.4",
     "ejs-lint": "0.3.0"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }
