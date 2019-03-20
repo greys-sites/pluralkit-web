@@ -57,6 +57,7 @@ async function setup() {
 			}
 		}).then(async resp=>{
 			if(resp.status == "404") return res.send("ERROR: system not found");
+			console.log("beep"); //temporary test of openshift
 			var sys = await resp.json();
 			fetch(`${API_URL}/s/${sys.id}/members`).then(async resp2=>{
 				var members = await resp2.json();
