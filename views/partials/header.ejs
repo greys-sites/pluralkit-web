@@ -1,0 +1,11 @@
+<img src="/pkicon.png" style="height: 48px; width: 48px;" />
+<span onclick="window.open('/','_self')">PluralKit</span>
+<%if(token != undefined){%>
+<button onclick="window.open('/logout','_self')">Logout</button>
+<%} else {%>
+<button onclick="window.open('/login','_self')">Login</button>
+<%}%>
+<%if(token != undefined){%>
+<button onclick="window.open('/members','_self')">Members</button>
+<button onclick="window.open('/dashboard','_self')">Dashboard</button>
+<%}%>

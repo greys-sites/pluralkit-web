@@ -1,0 +1,11 @@
+	<h2>Welcome<%=member%>!</h2>
+	<h3><strong>System Stats:</strong></h3>
+	<p>
+	<strong>Member count:</strong> <%=members%> <button onclick="window.open('/members','_self')">View members</button>
+	<br/><br/>
+	<strong>Current fronters:</strong><br/><%=(fronters && fronters[0] ? fronters.map(m => m.name).join("\n") : "None")%>
+	<br/><br/>
+	<%if(system.description){%>
+	<strong>Description</strong>: <%=system.description%>
+	<%}%>
+	</p>

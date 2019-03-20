@@ -1,0 +1,8 @@
+	<h2>Edit System</h2>
+	<form action="/submit" method="post">
+	<p>
+	<strong>Name:</strong> <input type="text" name="name" value="<%system.name%>"
+	<br/><br/>
+	<strong>Current fronters:</strong><br><%=fronters.map(m => m.name).join("\n") || "None"%>
+	</p>
+	</form>

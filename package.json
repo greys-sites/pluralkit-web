@@ -1,0 +1,12 @@
+{
+  "main": "index.js",
+  "dependencies": {
+    "express": "4.16.4",
+    "ejs": "2.6.1",
+    "btoa": "1.2.1",
+    "node-fetch": "2.3.0",
+    "form-data": "2.3.3",
+    "cookie-parser": "1.4.4",
+    "ejs-lint": "0.3.0"
+  }
+}

@@ -1,0 +1,34 @@
+<script>
+<%function col(hex){
+	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+	    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+	        return r + r + g + g + b + b;
+	    });
+
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	    return result ? {
+	        r: parseInt(result[1], 16),
+	        g: parseInt(result[2], 16),
+	        b: parseInt(result[3], 16)
+	    } : null;
+}%>
+</script>
+
+<img class="avatar" src="<%=member.avatar_url%>">
+<div class="memberinfo" style="background-color: #<%=member.color || "fff"%>; color: #<%=(member.color ? (col(member.color).r * 0.299) + (col(member.color).g * 0.587) + (col(member.color).b * 0.114) < 186 ? "fff" : "000" : "000" )%>;">
+
+<form action="/submit" id="membedit" method="post">
+<input type="hidden" name="member" value="<%=JSON.stringify(member)%>">
+<input type="hidden" name="system" value="<%=JSON.stringify(system)%>">
+<input type="hidden" name="action_type" value="<%=action_type%>">
+<p><strong>Name:</strong> <input name="name" value="<%=member.name%>" pattern="[^\n]{2,32}"></p>
+<br/>
+<p><strong>Pronouns:</strong> <input type="text" name="pronouns" value="<%=member.pronouns || ""%>"></p>
+<br/>
+<p><strong>Birthday:</strong> <input type="text" name="birthday" pattern="\d{4}-\d{2}-\d{2}" value="<%=member.birthday || null%>"></p>
+<br/>
+<p><strong>Color:</strong> <input type="color" name="color" value="<%="#"+member.color || null%>"></p>
+<br/>
+<p class="desc"><strong>Description:</strong> <textarea name="description" maxlength=2000 form="membedit" rows=5><%=member.description || ""%></textarea></p>
+<button onclick="parentNode.submit()">save</button>
+</form>

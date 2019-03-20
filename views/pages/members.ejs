@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<% include ../partials/head %>
+</head>
+
+<body>
+	<div class="container">
+		<header>
+			<%- include("../partials/header",{token: token}); %>
+		</header>
+		<br/>
+		<%- include("../partials/sidebar",{members: members, system: system}) %>
+		<%if(member != undefined){%>
+			<%if(edit == "true"){%>
+				<div class="membcontainer">
+					<%- include("../partials/edit_member",{member: JSON.parse(member)}); %>
+				</div>
+			<%} else {%>
+				<div class="membcontainer">
+					<%- include("../partials/member",{member: JSON.parse(member), system: system}); %>
+				</div>
+			<%}%>
+		<%}%>
+	</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+.avatar {
+	float: left;
+	object-fit: cover;
+	width: 128px;
+	height: 128px;
+	margin: 10px;
+	border-radius: 50%;
+}
+
+.memberinfo {
+	float: left;
+	border-radius: 5px;
+	min-width: 50%;
+	max-width: 80%;
+	height: 75%;
+	border-style: solid;
+	border-color: black;
+	border-width: 2px;
+}
+
+.membcontainer {
+	float:left;
+	width: 70%;
+}
+
+.desc textarea {
+	vertical-align: top;
+}
+
+@media screen and (max-width:820px) {
+
+	.avatar {
+		float: none;
+		display: block;
+		width: 128px;
+		height: 128px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		border-radius: 50%;
+	}
+
+	.membcontainer {
+		float: left;
+		width: 70%;
+		text-align: center;
+	}
+	.memberinfo {
+		float: none;
+		border-radius: 5px;
+		width: 100%;
+		height: 75%;
+		margin: 10px auto;
+		border-style: solid;
+		border-color: black;
+		border-width: 2px;
+	}
+
+}
+
+div p {
+	margin: 5px;
+}
