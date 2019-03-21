@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 
 const app = express();
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.API_URL || "https://pkapi.astrid.fun";
 
 app.set("view engine", "ejs");
 app.set("views", "./views");
@@ -116,6 +116,9 @@ async function setup() {
 					var member = JSON.parse(req.body.member);
 					req.body.system = req.body.system.id ? req.body.system : JSON.parse(req.body.system);
 					req.body.birthday = req.body.birthday == "" ? null : req.body.birthday;
+					req.body.prefix = req.body.prefix == "" ? null : req.body.prefix;
+					req.body.suffix == "" ? null : req.body.suffix;
+					console.log(req.body.avatar_url);
 					fetch(`${API_URL}/m/${member.id}`,{
 						method: "PATCH",
 						headers: {
@@ -131,8 +134,8 @@ async function setup() {
 								res.send("ERROR: bad request. something went wrong :(")
 								break;
 							default:
-								var data = await resp.json();
-								res.render("pages/submit.ejs",{member: JSON.stringify(data), system: req.body.system});
+								var data = await resp.text();
+								res.render("pages/submit.ejs",{member: (data), system: req.body.system});
 								break;
 						}
 					})
@@ -142,7 +145,6 @@ async function setup() {
 					var member = JSON.parse(req.body.member);
 					req.body.system = req.body.system.id ? req.body.system : JSON.parse(req.body.system);
 					req.body.birthday = req.body.birthday == "" ? null : req.body.birthday;
-					console.log(req.body);
 					fetch(`${API_URL}/m`,{
 						method: "POST",
 						headers: {
@@ -150,6 +152,8 @@ async function setup() {
 						},
 						body: JSON.stringify({"name": req.body.name})
 					}).then(async resp => {
+						var dat = await resp.text();
+						console.log(dat);
 						switch(resp.status.toString()) {
 							case "401":
 								res.send("ERROR: unauthorized (your token may be wrong)");
@@ -157,21 +161,34 @@ async function setup() {
 							case "400":
 								res.send("ERROR: bad request. something went wrong :(")
 								break;
+							case "500":
+								res.send("ERROR: server borked :'3");
+								break;
 							default:
 
-								// var membdat = await fetch(API_URL + "/m/" + (await resp.text()),{
-								// 	method: "PATCH",
-								// 	headers: {
-								// 		"X-Token": token
-								// 	},
-								// 	body: JSON.stringify(req.body)
-								// });
+								var membdat = await fetch(API_URL + "/m/" + (await resp.text()),{
+									method: "PATCH",
+									headers: {
+										"X-Token": token
+									},
+									body: JSON.stringify(req.body)
+								});
 								var data = await resp.text();
-								console.log(data);
-								// res.render("pages/submit.ejs",{member: JSON.stringify(data), system: JSON.stringify(req.body.system)});
+								res.render("pages/submit.ejs",{member: JSON.stringify(data), system: JSON.stringify(req.body.system)});
 								break;
 						}
 					})
+					break;
+				case "memberdelete":
+					fetch(`${API_URL}/m/${JSON.parse(req.body.member).id}`,{
+						method: "DELETE",
+						headers: {
+							"X-Token": token
+						}
+					}).then(async resp =>{
+						console.log(await resp.text());
+						res.render("pages/submit.ejs",{member: undefined, system: JSON.stringify(req.body.system)});
+					});
 					break;
 				default:
 					res.send("Something went wrong :(")

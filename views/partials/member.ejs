@@ -30,18 +30,29 @@
 <%if(member.color){%>
 <br/>
 <p><strong>Color:</strong> #<%=member.color%></p>
+<%}%><%if(member.prefix || member.suffix){%>
+<br/>
+<p><strong>Proxy:</strong> <%=member.prefix || ""%>text<%=member.suffix || ""%></p>
 <%}%>
 <%if(member.description){%>
 <br/>
 <p><strong>Description:</strong> <%=member.description%></p>
 <%}%>
 </div>
-<span><form action="/members" method="post">
+<span><form action="/members" method="post" class="button">
 <input type="hidden" name="member" value="<%=JSON.stringify(member)%>">
 <input type="hidden" name="system" value="<%=JSON.stringify(system)%>">
 <input type="hidden" name="edit" value=true>
 <input type="hidden" name="action_type" value="memberedit">
 <button onclick="parentNode.submit()">edit</button>
+</form>
+</span>
+<span><form action="/submit" method="post" class="button">
+<input type="hidden" name="member" value="<%=JSON.stringify(member)%>">
+<input type="hidden" name="system" value="<%=JSON.stringify(system)%>">
+<input type="hidden" name="edit" value=delete>
+<input type="hidden" name="action_type" value="memberdelete">
+<button onclick="parentNode.submit()">delete</button>
 </form>
 </span>
 <%} else {%>

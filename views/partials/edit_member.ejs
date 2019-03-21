@@ -29,6 +29,9 @@
 <br/>
 <p><strong>Color:</strong> <input type="color" name="color" value="<%="#"+member.color || null%>"></p>
 <br/>
+<p><strong>Prefix:</strong> <input type="text" name="prefix" value="<%=member.prefix || null%>" style="width: 50px;"> <strong>Suffix:</strong> <input type="text" name="suffix" value="<%=member.suffix || null%>" style="width: 50px;"></p>
+<br/>
 <p class="desc"><strong>Description:</strong> <textarea name="description" maxlength=2000 form="membedit" rows=5><%=member.description || ""%></textarea></p>
 <button onclick="parentNode.submit()">save</button>
 </form>
+</div>

@@ -9,8 +9,8 @@
 		<header>
 			<%- include("../partials/header",{token: token}); %>
 		</header>
-		<br/>
 		<%- include("../partials/sidebar",{members: members, system: system}) %>
+		<br/>
 		<%if(member != undefined){%>
 			<%if(edit == "true"){%>
 				<div class="membcontainer">
@@ -22,7 +22,7 @@
 				</div>
 			<%}%>
 		<%}%>
+		<% include ../partials/footer %>
 	</div>
-	<% include ../partials/footer %>
 </body>
 </html>

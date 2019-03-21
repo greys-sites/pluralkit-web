@@ -13,14 +13,14 @@
 	    } : null;
 }%>
 </script>
-<div style="display: inline-block; overflow-y: scroll; width: 25%; height: 500px; text-align: center; float: left;">
+<div style="display: inline-block; overflow-y: scroll; width: 25%; height: 100%; text-align: center; float: left;">
 	<p><%="System members for"%><br/><%= (system.name || system.id) +":"%></p>
 	<% members.forEach(m => { %>
-	<form action="/members" method="post">
-	<input type="hidden" name="system" value="<%=JSON.stringify(system)%>">
-	<input type="hidden" name="member" value="<%=JSON.stringify(m)%>">
-	<input type="hidden" name="token" value="<%=token%>">
-	<div class = "member" style="background-color: #<%=m.color || 'ddd' %>; color: #<%=(m.color ? (col(m.color).r * 0.299) + (col(m.color).g * 0.587) + (col(m.color).b * 0.114) < 186 ? "fff" : "000" : "000" )%>;" onclick = "parentNode.submit()"><div class = "name"><%= m.name %></div></div>
-	</form>
+		<form action="/members" method="post">
+			<input type="hidden" name="system" value="<%=JSON.stringify(system)%>">
+			<input type="hidden" name="member" value="<%=JSON.stringify(m)%>">
+			<input type="hidden" name="token" value="<%=token%>">
+			<div class = "member" style="background-color: #<%=m.color || 'ddd' %>; color: #<%=(m.color ? (col(m.color).r * 0.299) + (col(m.color).g * 0.587) + (col(m.color).b * 0.114) < 186 ? "fff" : "000" : "000" )%>;" onclick = "parentNode.submit()"><div class = "name"><%= m.name %></div></div>
+		</form>
 	<% }) %>
 </div>
