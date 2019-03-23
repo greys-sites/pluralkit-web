@@ -15,6 +15,12 @@
 </script>
 <div style="display: inline-block; overflow-y: scroll; width: 25%; height: 100%; text-align: center; float: left;">
 	<p><%="System members for"%><br/><%= (system.name || system.id) +":"%></p>
+	<form action="/members" method="post">
+	<input type="hidden" name="member" value="<%=JSON.stringify({name: "Member", color: "ffffff", birthday: null, description: null, pronouns: null})%>">
+	<input type="hidden" name="edit" value=true>
+	<input type="hidden" name="action_type" value="membercreate">
+	<div class = "member" style="background-color: #ddd; color: #000;" onclick = "parentNode.submit()"><div class = "name">CREATE</div></div>
+	</form>
 	<% members.forEach(m => { %>
 		<form action="/members" method="post">
 			<input type="hidden" name="system" value="<%=JSON.stringify(system)%>">

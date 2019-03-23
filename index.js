@@ -57,7 +57,6 @@ async function setup() {
 			}
 		}).then(async resp=>{
 			if(resp.status == "404") return res.send("ERROR: system not found");
-			console.log("beep"); //temporary test of openshift
 			var sys = await resp.json();
 			fetch(`${API_URL}/s/${sys.id}/members`).then(async resp2=>{
 				var members = await resp2.json();
@@ -118,7 +117,6 @@ async function setup() {
 					req.body.birthday = req.body.birthday == "" ? null : req.body.birthday;
 					req.body.prefix = req.body.prefix == "" ? null : req.body.prefix;
 					req.body.suffix == "" ? null : req.body.suffix;
-					console.log(req.body.avatar_url);
 					fetch(`${API_URL}/m/${member.id}`,{
 						method: "PATCH",
 						headers: {
@@ -143,17 +141,17 @@ async function setup() {
 				case "membercreate":
 					if(!req.body.member) return res.send("ERROR: memberedit action type; member not supplied");
 					var member = JSON.parse(req.body.member);
-					req.body.system = req.body.system.id ? req.body.system : JSON.parse(req.body.system);
-					req.body.birthday = req.body.birthday == "" ? null : req.body.birthday;
+					var body = req.body;
+					body.system = body.system.id ? body.system : JSON.parse(body.system);
+					body.birthday = body.birthday == "" ? null : body.birthday;
 					fetch(`${API_URL}/m`,{
 						method: "POST",
 						headers: {
 							"X-Token": token
 						},
-						body: JSON.stringify({"name": req.body.name})
+						body: JSON.stringify({"name": body.name})
 					}).then(async resp => {
-						var dat = await resp.text();
-						console.log(dat);
+						var dat = await resp.json();
 						switch(resp.status.toString()) {
 							case "401":
 								res.send("ERROR: unauthorized (your token may be wrong)");
@@ -166,15 +164,15 @@ async function setup() {
 								break;
 							default:
 
-								var membdat = await fetch(API_URL + "/m/" + (await resp.text()),{
+								var membdat = await fetch(API_URL + "/m/" + (dat.id),{
 									method: "PATCH",
 									headers: {
 										"X-Token": token
 									},
-									body: JSON.stringify(req.body)
+									body: JSON.stringify(body)
 								});
-								var data = await resp.text();
-								res.render("pages/submit.ejs",{member: JSON.stringify(data), system: JSON.stringify(req.body.system)});
+								var data = await membdat.json();
+								res.render("pages/submit.ejs",{member: JSON.stringify(data), system: JSON.stringify(body.system)});
 								break;
 						}
 					})
@@ -186,7 +184,6 @@ async function setup() {
 							"X-Token": token
 						}
 					}).then(async resp =>{
-						console.log(await resp.text());
 						res.render("pages/submit.ejs",{member: undefined, system: JSON.stringify(req.body.system)});
 					});
 					break;
