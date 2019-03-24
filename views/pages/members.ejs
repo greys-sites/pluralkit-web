@@ -5,10 +5,10 @@
 </head>
 
 <body>
+	<header>
+		<%- include("../partials/header",{token: token}); %>
+	</header>
 	<div class="container">
-		<header>
-			<%- include("../partials/header",{token: token}); %>
-		</header>
 		<%- include("../partials/sidebar",{members: members, system: system}) %>
 		<br/>
 		<%if(member != undefined){%>

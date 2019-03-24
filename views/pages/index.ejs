@@ -5,11 +5,12 @@
 </head>
 
 <body>
+	<header>
+		<%- include('../partials/header',{token: token}); %>
+	</header>
 	<div class="container">
-		<header>
-			<%- include('../partials/header',{token: token}); %>
-		</header>
 		<p>WIP - Use the Login button to enter your token and get started</p>
+		<br/>
 	</div>
 	<% include ../partials/footer %>
 </body>

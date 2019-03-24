@@ -11,10 +11,10 @@ h2 {
 </head>
 
 <body>
+	<header>
+		<%- include("../partials/header",{token: token}) %>
+	</header>
 	<div class="container">
-		<header>
-			<%- include("../partials/header",{token: token}) %>
-		</header>
 		<br/>
 		<div class="container">
 		<%- include("../partials/system",{member: member, fronters: fronters, members: members})%>
