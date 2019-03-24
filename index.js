@@ -25,6 +25,71 @@ async function setup() {
 		res.render("pages/index.ejs", { members: [{name: "Enter token above. You can get this by using 'pk;token'"}], member: undefined, token: token, system: undefined})
 	});
 
+	app.get("/test",(req,res)=>{
+		res.send({
+		  "$jason": {
+		    "head": {
+		      "title": "{ ˃̵̑ᴥ˂̵̑}",
+		      "actions": {
+		        "$foreground": {
+		          "type": "$reload"
+		        }
+		      }
+		    },
+		    "body": {
+		      "style": {
+		        "background": "#ffffff",
+		        "border": "none"
+		      },
+		      "sections": [
+		        {
+		          "items": [
+		            {
+		              "type": "vertical",
+		              "style": {
+		                "padding": "30",
+		                "spacing": "20",
+		                "align": "center"
+		              },
+		              "components": [
+		                {
+		                  "type": "label",
+		                  "text": "It's changed ig",
+		                  "style": {
+		                    "align": "center",
+		                    "font": "Courier-Bold",
+		                    "size": "18"
+		                  }
+		                },
+		                {
+		                  "type": "label",
+		                  "text": "This is a test pls ignore",
+		                  "style": {
+		                    "align": "center",
+		                    "font": "Courier",
+		                    "padding": "30",
+		                    "size": "14"
+		                  }
+		                },
+		                {
+		                  "type": "label",
+		                  "text": "{ uᴥu}",
+		                  "style": {
+		                    "align": "center",
+		                    "font": "HelveticaNeue-Bold",
+		                    "size": "50"
+		                  }
+		                }
+		              ]
+		            }
+		          ]
+		        }
+		      ]
+		    }
+		  }
+		})
+	})
+
 	app.post("/dashboard", (req, res) => {
 		if(!req.body.token && !req.cookies.token) return res.send("ERROR: system token not supplied");
 		if(req.body.token && !req.cookies.token) res.cookie("token",req.body.token, {expires: new Date("01/01/2030")});
