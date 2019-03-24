@@ -217,6 +217,17 @@ a {
 	border-radius: 50%;
 }
 
+.systeminfo {
+	float: left;
+	border-radius: 5px;
+	min-width: 40%;
+	max-width: 60%;
+	height: 75%;
+	border-style: solid;
+	border-color: black;
+	border-width: 2px;
+}
+
 .memberinfo {
 	float: left;
 	border-radius: 5px;
@@ -269,6 +280,23 @@ input.inline {
 		margin-top: 10px;
 		margin-bottom: 10px;
 		border-radius: 50%;
+	}
+
+	.syscontainer {
+		float: left;
+		width: 100%;
+		text-align: center;
+	}
+	.systeminfo {
+		float: none;
+		border-radius: 5px;
+		width: 100%;
+		min-height: 50%;
+		max-height: 75%;
+		margin: 10px auto;
+		border-style: solid;
+		border-color: black;
+		border-width: 2px;
 	}
 
 	.membcontainer {
@@ -328,6 +356,11 @@ input.inline {
 
 @media (max-width: 1075px) {
 	.memberinfo {
+		width: 60%;
+		height: 75%;
+	}
+
+	.systeminfo {
 		width: 60%;
 		height: 75%;
 	}
