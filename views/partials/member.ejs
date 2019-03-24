@@ -15,8 +15,8 @@
 </script>
 
 <%if(member.id) {%>
-<img class="avatar" src="<%=member.avatar_url || "https://cdn.discordapp.com/embed/avatars/0.png"%>">
-<div class="memberinfo" style="background-color: #<%=member.color || "fff"%>; color: #<%=(member.color ? (col(member.color).r * 0.299) + (col(member.color).g * 0.587) + (col(member.color).b * 0.114) < 186 ? "fff" : "000" : "000" )%>;">
+<img class="avatar" src="<%=member.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'%>">
+<div class="memberinfo" style="background-color: #<%=member.color || 'fff'%>; color: #<%=(member.color ? (col(member.color).r * 0.299) + (col(member.color).g * 0.587) + (col(member.color).b * 0.114) < 186 ? 'fff' : '000' : '000' )%>;">
 
 <p><strong><%=member.name%> (<%=member.id%>)</strong></p>
 <%if(member.pronouns){%>
