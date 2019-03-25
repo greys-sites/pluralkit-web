@@ -1,0 +1,14 @@
+<img class="avatar" src="<%=system.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'%>">
+
+<div class="systeminfo" style="background-color: #fff; color: #000;">
+<p><strong><%=system.name || '(no name)'%> (<%=system.id%>)</strong></p>
+<%if(system.tag){%>
+<br/>
+<p><strong>Tag:</strong> <%=system.tag%></p>
+<%}%>
+<p><strong>Member count:</strong> <%=members%>
+<br/>
+<%if(system.description){%>
+<p><strong>Description</strong>: <%=system.description%></p>
+<%}%>
+</div>

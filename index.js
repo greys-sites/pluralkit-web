@@ -25,69 +25,34 @@ async function setup() {
 		res.render("pages/index.ejs", { members: [{name: "Enter token above. You can get this by using 'pk;token'"}], member: undefined, token: token, system: undefined})
 	});
 
-	app.get("/test",(req,res)=>{
-		res.send({
-		  "$jason": {
-		    "head": {
-		      "title": "{ ˃̵̑ᴥ˂̵̑}",
-		      "actions": {
-		        "$foreground": {
-		          "type": "$reload"
-		        }
-		      }
-		    },
-		    "body": {
-		      "style": {
-		        "background": "#ffffff",
-		        "border": "none"
-		      },
-		      "sections": [
-		        {
-		          "items": [
-		            {
-		              "type": "vertical",
-		              "style": {
-		                "padding": "30",
-		                "spacing": "20",
-		                "align": "center"
-		              },
-		              "components": [
-		                {
-		                  "type": "label",
-		                  "text": "It's changed ig",
-		                  "style": {
-		                    "align": "center",
-		                    "font": "Courier-Bold",
-		                    "size": "18"
-		                  }
-		                },
-		                {
-		                  "type": "label",
-		                  "text": "This is a test pls ignore",
-		                  "style": {
-		                    "align": "center",
-		                    "font": "Courier",
-		                    "padding": "30",
-		                    "size": "14"
-		                  }
-		                },
-		                {
-		                  "type": "label",
-		                  "text": "{ uᴥu}",
-		                  "style": {
-		                    "align": "center",
-		                    "font": "HelveticaNeue-Bold",
-		                    "size": "50"
-		                  }
-		                }
-		              ]
-		            }
-		          ]
-		        }
-		      ]
-		    }
-		  }
-		})
+	app.get("/system/:id",async (req,res)=>{
+		var sys = await fetch(`${API_URL}/s/${req.params.id}`);
+		if(sys.status == 200) {
+			var sysdat = await sys.json();
+			var membs = await fetch(`${API_URL}/s/${req.params.id}/members`);
+			var membdat = await membs.json();
+			membdat = await membdat.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+			res.render("pages/profile.ejs",{system: sysdat, members: membdat, token: req.cookies.token || undefined, member: req.body.member || undefined});
+		} else if(sys.status == 404) {
+			res.send("System profile not found :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+		} else {
+			res.send("Something went wrong :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+		}
+	})
+
+	app.post("/system/:id",async (req,res)=>{
+		var sys = await fetch(`${API_URL}/s/${req.params.id}`);
+		if(sys.status == 200) {
+			var sysdat = await sys.json();
+			var membs = await fetch(`${API_URL}/s/${req.params.id}/members`);
+			var membdat = await membs.json();
+			membdat = await membdat.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+			res.render("pages/profile.ejs",{system: sysdat, members: membdat, token: req.cookies.token || undefined, member: req.body.member || undefined});
+		} else if(sys.status == 404) {
+			res.send("System profile not found :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+		} else {
+			res.send("Something went wrong :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+		}
 	})
 
 	app.post("/dashboard", (req, res) => {

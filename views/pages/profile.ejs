@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<% include ../partials/head %>
+<style>
+
+	.syscontainer {
+		height: 25%;
+	}
+	@media (max-width: 820px) {
+		.systeminfo {
+			float: left;
+			border-radius: 5px;
+			min-width: 40%;
+			max-width: 60%;
+			height: 75%;
+			border-style: solid;
+			border-color: black;
+			border-width: 2px;
+			text-align: left;
+			overflow-y: scroll;
+		}
+
+		.syscontainer .avatar {
+			float: left;
+			object-fit: cover;
+			width: 128px;
+			height: 128px;
+			margin: 10px;
+			border-radius: 50%;
+		}
+	}
+</style>
+</head>
+
+<body>
+	<header>
+		<%- include("../partials/header",{token: token}); %>
+	</header>
+	<div class="syscontainer">
+		<%- include("../partials/system_other",{system: system, members: members.length}) %>
+	</div>
+	<div class="container" style="height: calc(75% - 75px);">
+		<%- include("../partials/sidebar_other",{members: members, system: system}) %>
+		<br/>
+		<%if(member != undefined){%>
+			<div class="membcontainer">
+				<%- include("../partials/member_other",{member: JSON.parse(member)}); %>
+			</div>
+		<%}%>
+		<% include ../partials/footer %>
+	</div>
+</body>
+</html>

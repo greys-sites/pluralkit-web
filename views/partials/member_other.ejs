@@ -1,0 +1,44 @@
+<script>
+<%function col(hex){
+	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+	    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+	        return r + r + g + g + b + b;
+	    });
+
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	    return result ? {
+	        r: parseInt(result[1], 16),
+	        g: parseInt(result[2], 16),
+	        b: parseInt(result[3], 16)
+	    } : null;
+}%>
+</script>
+
+<%if(member.id) {%>
+<img class="avatar" src="<%=member.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'%>">
+<div class="memberinfo" style="background-color: #<%=member.color || 'fff'%>; color: #<%=(member.color ? (col(member.color).r * 0.299) + (col(member.color).g * 0.587) + (col(member.color).b * 0.114) < 186 ? 'fff' : '000' : '000' )%>;">
+
+<p><strong><%=member.name%> (<%=member.id%>)</strong></p>
+<%if(member.pronouns){%>
+<br/>
+<p><strong>Pronouns:</strong> <%=member.pronouns%></p>
+<%}%>
+<%if(member.birthday){%>
+<br/>
+<p><strong>Birthday:</strong> <%=member.birthday%></p>
+<%}%>
+<%if(member.color){%>
+<br/>
+<p><strong>Color:</strong> #<%=member.color%></p>
+<%}%><%if(member.prefix || member.suffix){%>
+<br/>
+<p><strong>Proxy:</strong> <%=member.prefix || ""%>text<%=member.suffix || ""%></p>
+<%}%>
+<%if(member.description){%>
+<br/>
+<p><strong>Description:</strong> <%=member.description%></p>
+<%}%>
+</div>
+<%} else {%>
+	Member not found.
+<%}%>
