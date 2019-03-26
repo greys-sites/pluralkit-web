@@ -49,7 +49,6 @@
 	</div>
 	<div class="container" style="height: calc(75% - 75px);">
 		<%- include("../partials/sidebar_other",{members: members, system: system}) %>
-		<br/>
 		<%if(member != undefined){%>
 			<div class="membcontainer">
 				<%- include("../partials/member_other",{member: JSON.parse(member)}); %>

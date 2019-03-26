@@ -21,7 +21,8 @@
 <p><strong><%=member.name%> (<%=member.id%>)</strong></p>
 <%if(member.pronouns){%>
 <br/>
-<p><strong>Pronouns:</strong> <%=member.pronouns%></p>
+<p><strong>Pronouns:</strong></p>
+<p class="scroll"><%=member.pronouns%></p>
 <%}%>
 <%if(member.birthday){%>
 <br/>
@@ -36,7 +37,8 @@
 <%}%>
 <%if(member.description){%>
 <br/>
-<p><strong>Description:</strong> <%=member.description%></p>
+<p><strong>Description:</strong></p>
+<p class="scroll"><%=member.description%></p>
 <%}%>
 </div>
 <span><form action="/members" method="post" class="button">
