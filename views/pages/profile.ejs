@@ -9,8 +9,16 @@
 
 	}
 
-	.systeminfo {
-		overflow-y: scroll;
+	hr {
+		height: 1vh;
+		margin: 0;
+		padding: 0;
+		background-color: #EEE7D7;
+		float: none;
+		display: block;
+		width: 100vw;
+		border-width: 0px;
+		border-radius: 10px;
 	}
 
 	@media (max-width: 820px) {
@@ -25,7 +33,6 @@
 			border-color: black;
 			border-width: 2px;
 			text-align: left;
-			overflow-y: scroll;
 		}
 
 		.syscontainer .avatar {
@@ -46,6 +53,7 @@
 	</header>
 	<div class="syscontainer">
 		<%- include("../partials/system_other",{system: system, members: members.length}) %>
+	<hr/>
 	</div>
 	<div class="container" style="height: calc(75% - 75px);">
 		<%- include("../partials/sidebar_other",{members: members, system: system}) %>
