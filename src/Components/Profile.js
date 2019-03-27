@@ -12,7 +12,7 @@ class Profile extends Component {
 
 	async componentDidMount() {
 		await this.setState({ token: cookie.load('token') });
-		var sys = await fetch((process.env.REACT_APP_API_URL || "")+"/s",{
+		var sys = await fetch("/api/s",{
 			headers: {
 				'X-Token': this.state.token
 			}
@@ -28,5 +28,3 @@ class Profile extends Component {
 }
 
 export default Profile;
-
-//<System id="kndhm" />

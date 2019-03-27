@@ -46,13 +46,13 @@ class App extends Component {
 			<div className="App-buttons">
 			<button
 			className="App-button"
-			onClick={()=> window.open('http://localhost:3000/'+(this.state && this.state.token ? "logout" : "login"),'_self')}
+			onClick={()=> window.open((this.state && this.state.token ? "logout" : "login"),'_self')}
 			>
 			{this.state && this.state.token ? "Logout" : "Login"}
 			</button>
 			<button
 			className="App-button"
-			onClick={()=> window.open('http://localhost:3000/dashboard','_self')}
+			onClick={()=> window.open('/dashboard','_self')}
 			>
 			Boop beep
 			</button>
