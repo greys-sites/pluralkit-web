@@ -13,7 +13,7 @@
 	    } : null;
 }%>
 </script>
-<div style="display: inline-block; overflow-y: scroll; width: 25%; height: 100%; text-align: center; float: left;">
+<div class="sidebar">
 	<p><%="System members for"%><br/><%= (system.name || system.id) +":"%></p>
 	<% members.forEach(m => { %>
 		<form action="/system/<%=system.id%>" method="post">

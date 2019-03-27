@@ -20,23 +20,18 @@
 
 <p><strong><%=member.name%> (<%=member.id%>)</strong></p>
 <%if(member.pronouns){%>
-<br/>
 <p><strong>Pronouns:</strong></p>
 <p class="scroll"><%=member.pronouns%></p>
 <%}%>
 <%if(member.birthday){%>
-<br/>
 <p><strong>Birthday:</strong> <%=member.birthday%></p>
 <%}%>
 <%if(member.color){%>
-<br/>
 <p><strong>Color:</strong> #<%=member.color%></p>
 <%}%><%if(member.prefix || member.suffix){%>
-<br/>
 <p><strong>Proxy:</strong> <%=member.prefix || ""%>text<%=member.suffix || ""%></p>
 <%}%>
 <%if(member.description){%>
-<br/>
 <p><strong>Description:</strong></p>
 <p class="scroll"><%=member.description%></p>
 <%}%>
