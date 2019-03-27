@@ -62,7 +62,18 @@
 	}
 
 	.membcontainer {
-		width: calc(100vw - (100px + 10vw));
+		flex-direction: column;
+		justify-content: center;
+		overflow-x: hidden;
+		width: 80%;
+	}
+
+	.memberinfo {
+		height: calc(100% - 20vh);
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		overflow-x: hidden;
 	}
 
 	.footer {
@@ -79,6 +90,10 @@
 		width: 100vw;
 		border-width: 0px;
 		border-radius: 10px;
+	}
+
+	.sysinfo .scroll {
+		max-height: 100%;
 	}
 
 	@media (max-width: 820px) {
@@ -98,10 +113,6 @@
 			border-radius: 50%;
 		}
 
-		.sysinfo .scroll {
-			max-height: 5vh;
-		}
-
 		.sysinfo {
 			height: 100%;
 			max-height: 100% !important;
@@ -110,10 +121,16 @@
 		.membcontainer {
 			flex-direction: column;
 			justify-content: center;
+			overflow-x: hidden;
+			width: 80%;
 		}
 
 		.memberinfo {
 			height: calc(100% - 20vh);
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			overflow-x: hidden;
 		}
 	}
 </style>
