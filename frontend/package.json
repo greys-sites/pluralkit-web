@@ -1,11 +1,9 @@
 {
-
   "name": "test",
   "version": "0.1.0",
   "private": true,
   "proxy": "https://pkapi.astrid.fun",
   "dependencies": {
-    "express": "^4.16.4",
     "node-fetch": "^2.3.0",
     "react": "^16.8.5",
     "react-cookies": "^0.1.0",
@@ -14,8 +12,10 @@
     "react-scripts": "2.1.8"
   },
   "scripts": {
-    "start": "node server.js",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -26,5 +26,4 @@
     "not ie <= 11",
     "not op_mini all"
   ]
-
 }

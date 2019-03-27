@@ -12,7 +12,8 @@ class Profile extends Component {
 
 	async componentDidMount() {
 		await this.setState({ token: cookie.load('token') });
-		var sys = await fetch("/api/s",{
+		var sys = await fetch("http://localhost:8080/api/s",{
+			method: "POST",
 			headers: {
 				'X-Token': this.state.token
 			}

@@ -5,8 +5,8 @@
 /.pnp
 .pnp.js
 
-#production
-/frontend/build
+# testing
+/coverage
 
 # misc
 .DS_Store
