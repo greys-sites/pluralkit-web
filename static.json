@@ -1,7 +1,11 @@
 {
-  "proxies": {
-    "/api/": {
-      "origin": "https://pkapi.astrid.fun/"
-    }
-  }
+	"root": "/public",
+	"proxies": {
+		"/api/": {
+			"origin": "https://pkapi.astrid.fun/"
+		}
+	},
+	"routes": {
+		"/*": "index.html"
+	}
 }
