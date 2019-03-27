@@ -1,5 +1,6 @@
 {
 	"root": "/public",
+	"clean-urls": true,
 	"proxies": {
 		"/api/": {
 			"origin": "https://pkapi.astrid.fun/"
