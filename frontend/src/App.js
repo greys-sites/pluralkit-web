@@ -7,6 +7,8 @@ import './App.css';
 
 import System from './Components/System';
 import Profile from './Components/Profile';
+import Dashboard from './Components/Dashboard';
+import Footer from './Components/Footer';
 
 class App extends Component {
 
@@ -28,9 +30,8 @@ class App extends Component {
 		cookie.remove('token', {path: '/'})
 	}
 
-	componentDidMount() {
-		console.log(cookie.load('token'));
-		this.setState({token: cookie.load('token')});
+	async componentDidMount() {
+		await this.setState({token: cookie.load('token')});
 	}
 
 	render() {
@@ -64,14 +65,13 @@ class App extends Component {
 			<Route exact path="/login" component={Login} />
 			<Route exact path="/logout" component={Logout} />
 			<Route exact path="/submit" component={Submit} />
+			<Route exact path="/dashboard" render={(props)=> <Dashboard {...props} token={cookie.load('token')}/>} />
 
 			<Route path="/profile/:id" component={Profile} />
 
 			</Router>
+			<Footer />
 			</div>
-			);
-		return (
-			<p>Loading...</p>
 			);
 	}
 }

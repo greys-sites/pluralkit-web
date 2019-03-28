@@ -1,26 +1,19 @@
 import React, { Component } from 'react';
-import cookie from 'react-cookies';
 import * as fetch from 'node-fetch';
 
 class System extends Component {
 	constructor(props) {
 		super(props);
 
+		console.log(this.props)
 		this.state = {
-			data: null,
-			id: props.id
+			sys: this.props.sys
 		};
-	}
-	async componentDidMount() {
-		console.log(this.state)
-		var sys = await fetch("https://pkapi.astrid.fun/s/"+this.state.id);
-		this.setState({data: await sys.json()})
 	}
 
 	render() {
-		if(this.state.data) {
-			var sys = this.state.data;
-			console.log(this.state.path);
+		if(this.state.sys) {
+			var sys = this.state.sys;
 			return (
 				<div className="App-syscontainer">
 				<img className="App-avatar" src={sys.avatar_url} alt="System avatar" />

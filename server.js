@@ -7,7 +7,7 @@ const app = express();
 app.use(express.static(path.join(__dirname,'/frontend/build')));
 
 
-app.get('/api/', (req,res) => {
+app.get('/api/*', (req,res) => {
     fetch(`https://pkapi.astrid.fun${req.path.replace("/api","")}`, {
     	headers: {
     		"X-Token": req.get("X-Token")

@@ -15,7 +15,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild": "cd frontend && npm install --only=dev && npm install && npm run build"
+    "heroku-postbuild": "cd frontend && npm install --only=dev && npm install && npm run build",
+    "build": "cd frontend && npm run build && cd .. && node server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
