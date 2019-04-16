@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 
 const app = express();
 
-const API_URL = process.env.API_URL || "https://pkapi.astrid.fun";
+const API_URL = process.env.API_URL || "https://api.pluralkit.me";
 
 app.set("view engine", "ejs");
 app.set("views", "./views");
@@ -34,9 +34,9 @@ async function setup() {
 			membdat = await membdat.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
 			res.render("pages/profile.ejs",{system: sysdat, members: membdat, token: req.cookies.token || undefined, member: req.body.member || undefined});
 		} else if(sys.status == 404) {
-			res.send("System profile not found :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+			res.send("System profile not found :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
 		} else {
-			res.send("Something went wrong :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+			res.send("Something went wrong :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
 		}
 	})
 
@@ -49,9 +49,9 @@ async function setup() {
 			membdat = await membdat.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
 			res.render("pages/profile.ejs",{system: sysdat, members: membdat, token: req.cookies.token || undefined, member: req.body.member || undefined});
 		} else if(sys.status == 404) {
-			res.send("System profile not found :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+			res.send("System profile not found :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
 		} else {
-			res.send("Something went wrong :(<br/><a href='https://www.pluralkit.tk/'>go back</a>")
+			res.send("Something went wrong :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
 		}
 	})
 
