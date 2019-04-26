@@ -60,7 +60,7 @@ async function setup() {
 		if(req.body.token && !req.cookies.token) res.cookie("token",req.body.token, {expires: new Date("01/01/2030")});
 		fetch(API_URL + "/s",{
 			headers: {
-				"X-Token": req.cookies.token || req.body.token
+				"Authorization": req.cookies.token || req.body.token
 			}
 		}).then(async resp=>{
 			if(resp.status == "404") return res.send("ERROR: system not found");
@@ -83,7 +83,7 @@ async function setup() {
 		if(!req.cookies.token) return res.send("ERROR: system token not supplied");
 		fetch(API_URL + "/s",{
 			headers: {
-				"X-Token": req.cookies.token
+				"Authorization": req.cookies.token
 			}
 		}).then(async resp=>{
 			if(resp.status == "404") return res.send("ERROR: system not found");
@@ -105,7 +105,7 @@ async function setup() {
 			if(!req.cookies.token) return res.send("ERROR: system token not supplied");
 		fetch(API_URL + "/s",{
 			headers: {
-				"X-Token": req.cookies.token
+				"Authorization": req.cookies.token
 			}
 		}).then(async resp=>{
 			if(resp.status == "404") return res.send("ERROR: system not found");
@@ -122,7 +122,7 @@ async function setup() {
 		if(!req.cookies.token) return res.send("ERROR: system token not supplied");
 		fetch(API_URL + "/s",{
 			headers: {
-				"X-Token": req.cookies.token
+				"Authorization": req.cookies.token
 			}
 		}).then(async resp=>{
 			if(resp.status == "404") return res.send("ERROR: system not found");
@@ -150,7 +150,7 @@ async function setup() {
 					fetch(`${API_URL}/m/${member.id}`,{
 						method: "PATCH",
 						headers: {
-							"X-Token": token
+							"Authorization": token
 						},
 						body: JSON.stringify(req.body)
 					}).then(async resp => {
@@ -177,7 +177,7 @@ async function setup() {
 					fetch(`${API_URL}/m`,{
 						method: "POST",
 						headers: {
-							"X-Token": token
+							"Authorization": token
 						},
 						body: JSON.stringify({"name": body.name})
 					}).then(async resp => {
@@ -197,7 +197,7 @@ async function setup() {
 								var membdat = await fetch(API_URL + "/m/" + (dat.id),{
 									method: "PATCH",
 									headers: {
-										"X-Token": token
+										"Authorization": token
 									},
 									body: JSON.stringify(body)
 								});
@@ -211,7 +211,7 @@ async function setup() {
 					fetch(`${API_URL}/m/${JSON.parse(req.body.member).id}`,{
 						method: "DELETE",
 						headers: {
-							"X-Token": token
+							"Authorization": token
 						}
 					}).then(async resp =>{
 						res.render("pages/submit.ejs",{member: undefined, system: JSON.stringify(req.body.system)});
