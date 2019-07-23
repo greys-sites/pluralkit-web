@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment as Frag } from 'react';
 import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import * as fetch from 'node-fetch';
 import './App.css';
@@ -25,6 +25,30 @@ class App extends Component {
 		this.setState({user: user, check: true})
 	}
 
+	logOut = async () => {
+		await fetch('/api/logout');
+		this.setState({user: undefined, check: true})
+	}
+
+	logIn = async (e) => {
+		e.preventDefault();
+		var st = this.state;
+
+		var res = await fetch('/api/login', {
+			method: "POST",
+			body: JSON.stringify(st),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+
+		if(res.status == 200) {
+			this.setState({submitted: true, user: await res.json()})
+		} else {
+			this.setState({submitted: true})
+		}
+	}
+
 	render() {
 		if(!this.state.check) return null;
 		return (
@@ -35,25 +59,28 @@ class App extends Component {
 			PluralKit Web
 			</a>
 			<div className="App-buttons">
-			<a href={this.state.user ? "logout" : "login"}
-			className="App-button"
-			>
-			{this.state.user ? "Logout" : "Login"}
-			</a>
-			<a
-			className="App-button"
-			href='/dashboard'
-			>
-			Dash
-			</a>
+			{this.state.user &&
+				<a className="App-button" onClick={()=>this.logOut()}>Logout</a>
+			}
 			</div>
 			</header>
 			{this.state.user ?
 				<Route exact path="/" render={(props)=> <Dashboard {...props} user={this.state.user} />} /> :
-				<Route exact path="/" render={(props)=> <Login {...props} />} />
+				<Frag>
+					<div className="App-login">
+					<p>Enter your token below. You can get this with "pk;token"</p>
+					<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
+					<form onSubmit={this.logIn}>
+						<input type="text"
+						floatinglabeltext="Token"
+		            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
+		            	/>
+		            <a className="App-button" onClick={this.logIn}>Submit</a>
+					</form>
+					</div>
+				</Frag>
 			}
 			
-			<Route path="/logout" component={Logout} />
 			<Route path="/profile/:id" component={Profile} />
 
 			</Router>
@@ -65,40 +92,7 @@ class App extends Component {
 
 // <Route exact path="/logout" component={Logout} />
 // <Route exact path="/submit" component={Submit} />
-
-class Index extends Component {
-	render() {
-		return(
-			<p>WORK IN PROGRESS</p>
-		);
-	}
-}
-
-class Logout extends Component {
-	constructor() {
-		super();
-
-		this.state = {success: undefined};
-	}
-
-	async componentDidMount() {
-		var res = await fetch('/api/logout');
-		if(res.status == 200) {
-			this.setState({succes: true});
-			this.props.history.push('/')
-		} else {
-			this.setState({success: false});
-		}
-	}
-	render() {
-		return (
-			<div>
-			<p>Logging out...</p>
-			<p style={{color: "red"}}>{this.state.success == false && "Something went wrong."}</p>
-			</div>
-		)
-	}
-}
+// Route path="/logout" component={Logout} />
 
 // class Submit extends Component {
 // 	constructor() {

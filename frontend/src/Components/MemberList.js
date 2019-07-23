@@ -4,18 +4,17 @@ import MemberCard from './MemberCard';
 class MemberList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {members: this.props.members};
+		this.state = {members: this.props.members, editable: this.props.editable, token: this.props.token};
 	}
 
 	render() {
 		return (
 			<Fragment>
-			<h1 style={{textAlign: 'center'}}>Members</h1>
 			<section className="App-memberList">
 	            {
             	this.state.members.map((m,i) => {
             		return (
-            			<MemberCard key={i} member={m} />
+            			<MemberCard key={i} member={m} editable={this.state.editable} token={this.state.token}/>
             		)
             	})
 	            }

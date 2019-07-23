@@ -87,9 +87,10 @@ app.get('/pkapi/*', async (req,res) => {
 app.post('/pkapi/*', async (req,res) => {
     var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
         method: "POST",
-        body: req.body,
+        body: JSON.stringify(req.body),
         headers: {
-            "Authorization": req.get("Authorization")
+            "Authorization": req.get("Authorization"),
+            "Content-Type": "application/json"
         }
     })
 
@@ -97,6 +98,32 @@ app.post('/pkapi/*', async (req,res) => {
 
     if(result.status >= 200 && result.status < 300) {
         data = await result.json();
+    } else {
+        data = {};
+    }
+
+    res.status(result.status).send(data);
+});
+
+app.patch('/pkapi/*', async (req,res) => {
+    console.log(req.body);
+    var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+        method: "PATCH",
+        body: JSON.stringify(req.body),
+        headers: {
+            "Authorization": req.get("Authorization"),
+            "Content-Type": "application/json"
+        }
+    })
+
+    var data;
+
+    if(result.status >= 200 && result.status < 300) {
+        try {
+            data = await result.json();
+        } catch(e) {
+            data = {};
+        }
     } else {
         data = {};
     }

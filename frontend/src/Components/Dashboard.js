@@ -29,7 +29,9 @@ class Dashboard extends Component {
 			return (
 				<Frag>
 				<System sys={this.state.user} />
-				<MemberList members={this.state.user.members} />
+				<h1 style={{textAlign: 'center'}}>Members</h1>
+				<p style={{textAlign: 'center', fontStyle: 'italic'}}>click a member to edit</p>
+				<MemberList members={this.state.user.members} editable={true} token={this.state.user.token} />
 				</Frag>
 			);
 		} else {
