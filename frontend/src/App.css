@@ -107,9 +107,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   background-color: #383b53;
-  height: 400px;
+  height: 500px;
   width: 250px;
   line-height: unset;
   margin-top: 0;
