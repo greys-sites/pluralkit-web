@@ -1,0 +1,9 @@
+{
+    "type": "link",
+    "version": "1.0",
+    "title": "PluralKit Web",
+    "provider_name":"PluralKit web interface",
+    "thumbnail_url": "https://pk.greysdawn.tk/favicon.ico",
+    "thumbnail_width": 32,
+    "thumbnail_height": 32
+}

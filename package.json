@@ -5,6 +5,7 @@
   "private": true,
   "proxy": "https://pkapi.astrid.fun",
   "dependencies": {
+    "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
     "node-fetch": "^2.3.0",
     "react": "^16.8.5",
@@ -16,7 +17,7 @@
   "scripts": {
     "start": "node server.js",
     "heroku-postbuild": "cd frontend && npm install --only=dev && npm install && npm run build",
-    "build": "cd frontend && npm run build && cd .. && node server.js"
+    "build": "cd frontend && yarn build && cd .. && node server.js"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -3,7 +3,9 @@
 body {
   font-family: 'Sniglet', cursive;
   font-size: calc(5px + 2vmin);
-  height: 100%;
+  height: 100vh;
+  color: white;
+  background-color: #20202B;
 
 }
 
@@ -13,15 +15,24 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 .App-avatar {
   float: left;
   object-fit: cover;
   height: 20vmin;
-  width: auto;
+  width: 20vmin;
   margin: 10px;
   border-radius: 50%;
+}
+
+.App-memberAvatar {
+  border-radius: 50%;
+  height: 128px;
+  width: 128px;
+  object-fit: cover;
+  margin: 10px;
 }
 
 .App-logo {
@@ -35,18 +46,17 @@ body {
 }
 
 .App-header {
-  border-radius: 10px;
-  background-color: #EEE7D7;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 2px 5px black;
+  background-color: #2a2d44;
   height: 8vmin;
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   font-size: calc(8px + 2vmin);
-  color: black;
-}
-
-.App-header p {
-  margin: auto 5px;
+  color: white;
 }
 
 .App-link {
@@ -54,14 +64,16 @@ body {
   text-decoration: none;
 }
 
+.App-link:hover {
+  text-decoration: underline;
+}
+
 .App-systeminfo {
   float: left;
   border-radius: 5px;
-  width: calc(100% - 200px);
-  height: 100%;
-  border-style: solid;
-  border-color: black;
-  border-width: 2px;
+  background-color: #383b53;
+  color: white;
+  width: 90%;
 }
 
 .App-syscontainer {
@@ -74,12 +86,62 @@ body {
   align-items: center;
 }
 
-.App-hidden {
-  display: none;
+.App-memberList {
+  background-color: rgba(0,0,0,0);
+  overflow-y: hidden;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+}
+
+.App-memberList>* {
+  flex: 1 1 250px;
+  max-width: 85%;
+}
+
+.App-memberCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #383b53;
+  height: 400px;
+  width: 250px;
+  line-height: unset;
+  cursor: default;
+  margin-top: 0;
+  margin-bottom: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.App-memberCard h1 {
+  color: #ccc;
+}
+
+.App-tagline {
+  margin-top: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  color: #52BAD5;
+  font-style: italic;
+}
+
+.App-memberCard p {
+  color: #aaa;
+  font-size: 16px;
+  width: 90%;
+  word-break: break-word;
 }
 
 .App-scroll {
   overflow-y: auto;
+  word-break: break-word;
 }
 
 .App-buttons {
@@ -89,28 +151,8 @@ body {
 }
 
 .App-button {
-  height: 6vmin;
   margin: 1vmin;
   font-size: 2.5vmin;
-  width: auto;
-}
-
-.App-footer {
-  height: 5vmin;
-  width: 100%;
-  text-align: left;
-  background-color: #EEE7D7;
-  color: black;
-  line-height: 5vmin;
-  font-size: calc(8px + 2vmin);
-}
-
-a {
-  text-decoration: underline;
-  color: inherit;
-}
-
-button {
   background-color: #F1CF86;
   border: none;
   border-radius: 5px;
@@ -122,11 +164,32 @@ button {
   margin: 5px 5px;
   cursor: pointer;
   height: 5vmin;
+  line-height: 5vmin;
   width: auto;
+}
+
+.App-footer {
+  height: 5vmin;
+  width: 100%;
+  text-align: left;
+  background-color: #2a2d44;
+  color: white;
+  line-height: 5vmin;
+  font-size: calc(8px + 2vmin);
+}
+
+a {
+  text-decoration: underline;
+  color: inherit;
 }
 
 div p {
   margin: 5px;
+}
+
+.App-login {
+  height: 100%;
+  padding: 20px;
 }
 
 @media (max-width: 820px) {

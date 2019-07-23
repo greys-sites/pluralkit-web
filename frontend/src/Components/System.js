@@ -7,24 +7,26 @@ class System extends Component {
 
 		console.log(this.props)
 		this.state = {
-			sys: this.props.sys
+			sys: this.props.sys,
+			edit: false
 		};
 	}
 
 	render() {
 		if(this.state.sys) {
 			var sys = this.state.sys;
+			var membs = this.state.sys.members;
+			var frnt = this.state.sys.fronters;
 			return (
 				<div className="App-syscontainer">
-				<img className="App-avatar" src={sys.avatar_url} alt="System avatar" />
-				<div className="App-systeminfo" style={{backgroundColor: '#fff', color: '#000'}}>
+				<img className="App-avatar" src={sys.avatar_url ? sys.avatar_url : "/default.png"} alt="System avatar" />
+				<div className="App-systeminfo">
 				<p><strong>{sys.name || "(no name)"} ({sys.id})</strong></p>
 				<p className={sys.tag ? "" : "App-hidden"}><strong>Tag:</strong> {sys.tag}</p>
-				<p><strong>Member count:</strong> WIP<button onclick="window.open('/members','_self')">View members</button></p>
-				<p><strong>Current fronters:</strong><br/> WIP</p>
+				<p><strong>Member count:</strong> {membs ? membs.length : "No members found"}</p>
+				<p><strong>Current fronter{frnt && frnt.members && frnt.members.length > 1 ? 's' : ''}:</strong> {frnt && frnt.members ? frnt.members.map(m => m.name).join(", ") : "None"}</p>
 				<br/>
-				<p className={sys.description ? "" : "App-hidden"}><strong>Description</strong>:</p>
-				<p className={sys.description ? "App-scroll" : "App-hidden"}>{sys.description}</p>
+				{sys.description && <p className="App-scroll"><strong>Description: </strong>{sys.description}</p>}
 				</div>
 				</div>
 			);
