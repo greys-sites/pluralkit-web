@@ -1,5 +1,4 @@
 import React, { Component, Fragment as Frag } from 'react';
-import cookie from 'react-cookies';
 import System from './System';
 import MemberList from './MemberList';
 

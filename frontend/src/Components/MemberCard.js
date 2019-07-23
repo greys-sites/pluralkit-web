@@ -82,7 +82,7 @@ class MemberCard extends Component {
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
 					<span className="App-tagline">{memb.prefix}text{memb.suffix}</span>
 					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
-					<p style={{overflowY: 'auto', height: '80px'}}>{memb.description || "(no description)"}</p>
+					<p>{memb.description || "(no description)"}</p>
 				</div>
 				);
 			}

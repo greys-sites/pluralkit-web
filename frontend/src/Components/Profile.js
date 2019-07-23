@@ -1,37 +1,37 @@
-import React, { Component, Fragment } from 'react';
-import cookie from 'react-cookies';
+import React, { Component, Fragment as Frag } from 'react';
 import System from './System';
+import MemberList from './MemberList';
 
 class Profile extends Component {
 
 	constructor(props) {
 		super(props);
 
-		this.state = {id: this.props.match.params.id || null, sys: null, members: null, fronters: null};
+		this.state = {id: this.props.match.params.id || null, user: undefined};
 	}
 
 	async componentDidMount() {
 		if(!this.state.id) return console.log("ID = null");
-		var sys = await fetch('/api/s/'+this.state.id);
+		var sys = await fetch('/api/user/'+this.state.id);
 		if(sys.status == 200) {
-			this.setState({ sys: await sys.json()});
-			var membs = await fetch(`/api/s/${this.state.id}/members`);
-			this.setState({members: await membs.json()});
-			var fronters = await fetch(`/api/s/${this.state.id}/fronters`);
-			this.setState({members: (await fronters.json()).members || []});
+			this.setState({ user: await sys.json()});
 		} else if(sys.status == 404) {
-			this.setState({sys: "404"})
+			this.setState({user: "404"})
 		} else {
-			this.setState({sys: null})
+			this.setState({user: null})
 		}
 	}
 
 	render () {
-		if(this.state.sys && this.state.sys != "404") {
+		if(this.state.user && this.state.user != "404") {
 			return (
-				<System sys={this.state.sys} />
+				<Frag>
+				<System sys={this.state.user} />
+				<h1 style={{textAlign: 'center'}}>Members</h1>
+				<MemberList members={this.state.user.members} editable={false} token={null} />
+				</Frag>
 			);
-		} else if(this.state.sys == "404") {
+		} else if(this.state.user == "404") {
 			return (
 				<p>System not found D:</p>
 			);

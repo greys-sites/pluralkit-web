@@ -37,6 +37,23 @@ app.get('/api/user', async (req,res)=> {
     }
 })
 
+app.get('/api/user/:id', async (req,res)=> {
+    var user = await fetch('https://api.pluralkit.me/s/'+req.params.id);
+    if(user.status != 200) {
+        res.status(404).send(undefined)
+    } else {
+        user = await user.json();
+        user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+        try {
+            user.fronters = await (await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters")).json()
+        } catch(e) {
+            user.fronters = {}
+        }
+
+        res.status(200).send(user)
+    }
+})
+
 app.post('/api/login', async (req,res)=> {
     var sys = await fetch('https://api.pluralkit.me/s', {
         method: "GET",

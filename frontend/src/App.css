@@ -129,13 +129,17 @@ body {
   margin-left: 5px;
   color: #52BAD5;
   font-style: italic;
+  font-size: calc(14px + 1vmin);
 }
 
 .App-memberCard p {
   color: #aaa;
-  font-size: 16px;
+  font-size: calc(14px + 1vmin);
   width: 90%;
   word-break: break-word;
+  overflow-x: hidden;
+  height: 80px;
+  overflow-y: auto;
 }
 
 .App-scroll {
