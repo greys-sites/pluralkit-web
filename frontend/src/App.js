@@ -66,19 +66,22 @@ class App extends Component {
 			</header>
 			{this.state.user ?
 				<Route exact path="/" render={(props)=> <Dashboard {...props} user={this.state.user} />} /> :
-				<Frag>
-					<div className="App-login">
-					<p>Enter your token below. You can get this with "pk;token"</p>
-					<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
-					<form onSubmit={this.logIn}>
-						<input type="text"
-						floatinglabeltext="Token"
-		            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
-		            	/>
-		            <a className="App-button" onClick={this.logIn}>Submit</a>
-					</form>
-					</div>
-				</Frag>
+				<Route exact path="/" render={(props)=> 
+					<Frag>
+						<div className="App-login">
+						<p>Enter your token below. You can get this with "pk;token"</p>
+						<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
+						<form onSubmit={this.logIn}>
+							<input type="text"
+							floatinglabeltext="Token"
+			            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
+			            	/>
+			            <a className="App-button" onClick={this.logIn}>Submit</a>
+						</form>
+						</div>
+					</Frag>
+				}
+				/>
 			}
 			
 			<Route path="/profile/:id" component={Profile} />
