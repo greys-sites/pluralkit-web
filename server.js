@@ -5,7 +5,6 @@ const fs = require('fs');
 
 const app = express();
 
-app.use(express.static(path.join(__dirname,'/frontend/build')));
 app.use(require('cookie-parser')());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -166,12 +165,24 @@ app.get("/profile/:id", async (req, res)=> {
         index = index.replace('$TITLE',prof.name+' || PluralKit Web');
         index = index.replace('$DESC','System on PluralKit');
         index = index.replace('$TWITDESC','System on PluralKit');
-        index = index.replace('$TWITTITLE',prof.name+'PluralKit Web');
-        index = index.replace('$OGTITLE',prof.name+'PluralKit Web');
+        index = index.replace('$TWITTITLE',prof.name+' || PluralKit Web');
+        index = index.replace('$OGTITLE',prof.name+' || PluralKit Web');
         index = index.replace('$OGDESC','System on PluralKit');
         index = index.replace('$OEMBED','oembed.json');
         res.send(index);
     }
+})
+
+app.get("/", async (req, res)=> {
+    var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+    index = index.replace('$TITLE','PluralKit Web');
+    index = index.replace('$DESC','Web interface for PluralKit');
+    index = index.replace('$TWITDESC','Web interface for PluralKit');
+    index = index.replace('$TWITTITLE','PluralKit Web');
+    index = index.replace('$OGTITLE','PluralKit Web');
+    index = index.replace('$OGDESC','Web interface for PluralKit');
+    index = index.replace('$OEMBED','oembed.json');
+    res.send(index);
 })
 
 app.use(express.static(path.join(__dirname, 'frontend/build')));
