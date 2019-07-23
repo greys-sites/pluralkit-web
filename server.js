@@ -149,7 +149,7 @@ app.patch('/pkapi/*', async (req,res) => {
 
 app.get("/profile/:id", async (req, res)=> {
     var prof = await fetch('https://api.pluralkit.me/s/'+req.params.id);
-    if(req.status == 404) {
+    if(prof.status != 200) {
         var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
         index = index.replace('$TITLE','404 || PluralKit Web');
         index = index.replace('$DESC','System not found');
