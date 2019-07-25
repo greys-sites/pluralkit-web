@@ -11,9 +11,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.get('/api/user', async (req,res)=> {
-    if(!req.cookies.user) return res.status(404).send(undefined);
+    if(!req.cookies.token) return res.status(404).send(undefined);
     else {
-        var token = req.cookies.user;
+        var token = req.cookies.token;
         var user = await fetch('https://api.pluralkit.me/s', {
             headers: {
                 Authorization: token
@@ -23,7 +23,7 @@ app.get('/api/user', async (req,res)=> {
             res.status(404).send(undefined)
         } else {
             user = await user.json();
-            user.token = req.cookies.user;
+            user.token = token;
             user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
             try {
                 user.fronters = await (await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters")).json()
@@ -71,7 +71,7 @@ app.post('/api/login', async (req,res)=> {
         } catch(e) {
             sys.fronters = {}
         }
-        res.cookie('user',req.body.token)
+        res.cookie('token',req.body.token)
         res.status(200).send(sys)
     }
 })
