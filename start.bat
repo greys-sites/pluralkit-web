@@ -1,1 +1,0 @@
-cd frontend && yarn build && cd .. && npm start

@@ -29,7 +29,7 @@ body {
 
 .App-memberAvatar {
   border-radius: 50%;
-  height: 128px;
+  min-height: 128px;
   width: 128px;
   object-fit: cover;
   margin: 10px;
@@ -110,6 +110,7 @@ body {
   justify-content: center;
   text-align: center;
   background-color: #383b53;
+  border-radius: 5px;
   height: 500px;
   width: 250px;
   line-height: unset;
@@ -117,6 +118,27 @@ body {
   margin-bottom: 30px;
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.App-memberCard input {
+  width: 90%;
+}
+
+.App-memberCard textarea {
+  width: 90%;
+  height: 100%;
+}
+
+.App-memberCard input, .App-memberCard textarea {
+    width: 90%;
+    background-color: #20202b;
+    color: white;
+    resize: none;
+    margin: 2px;
+    font-family: Sniglet;
+    font-size: calc(12px + 1vmin);
+    border: none;
+    border-radius: 5px;
 }
 
 .App-memberCard h1 {
@@ -133,19 +155,20 @@ body {
   font-size: calc(14px + 1vmin);
 }
 
-.App-memberCard p {
+.App-description {
   color: #aaa;
+  text-align: left;
   font-size: calc(14px + 1vmin);
+  line-height: calc(14px + 1vmin);
+  height: 100%;
   width: 90%;
-  word-break: break-word;
   overflow-x: hidden;
-  height: 80px;
   overflow-y: auto;
+  word-break: break-word;
 }
 
-.App-scroll {
-  overflow-y: auto;
-  word-break: break-word;
+.App-description::-webkit-scrollbar, .App-memberCard textarea::-webkit-scrollbar {
+    width: 5px;
 }
 
 .App-buttons {
@@ -161,10 +184,11 @@ body {
   border: none;
   border-radius: 5px;
   color: white;
-  padding: 1.25vmin 10px;
+  padding: 0 10px;
   text-align: center;
   text-decoration: none;
   font-size: 2.5vmin;
+  font-family: Sniglet;
   margin: 5px 5px;
   cursor: pointer;
   height: 5vmin;
@@ -180,6 +204,17 @@ body {
   color: white;
   line-height: 5vmin;
   font-size: calc(8px + 2vmin);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #414361;
+    border-radius: 20px;
 }
 
 a {

@@ -16,11 +16,21 @@ class MemberCard extends Component {
 
 	enableEdit = (member)=> {
 		if(!this.state.editable) return;
-		this.setState({edit: {enabled: true, member: member}});
+		this.setState((state)=> {
+			state.edit = {enabled: true, member: Object.assign({},member)};
+			return state;
+		})
+	}
+
+	cancelEdit = ()=> {
+		this.setState((state)=> {
+			state.edit = {enabled: false, member: null};
+			state.member = this.props.member;
+			return state;
+		})
 	}
 
 	handleChange = (name, e) => {
-		console.log(this.state.edit);
 		const n = name;
 		const val = e.target.value;
 		this.setState((state) => {
@@ -56,8 +66,10 @@ class MemberCard extends Component {
 	}
 
 	render() {
-		var memb = this.state.member
+		var memb = this.state.member;
+		console.log(this.state.member);
 		var edit = this.state.edit;
+		console.log(this.state.edit.member);
 		if(memb) {
 			if(edit.enabled) {
 				return (
@@ -71,7 +83,7 @@ class MemberCard extends Component {
 					<input type="text" pattern="\d{4}-\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
 					<textarea onChange={(e)=>this.handleChange("description",e)}>{edit.member.description}</textarea>
 				
-					<button className="App-button" type="submit">Save</button>
+					<div><button className="App-button" type="submit">Save</button> <button className="App-button" type="button" onClick={this.cancelEdit}>Cancel</button></div>
 				</form>
 				)
 			} else {
@@ -83,7 +95,7 @@ class MemberCard extends Component {
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
 					<span className="App-tagline">{memb.prefix}text{memb.suffix}</span>
 					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
-					<p>{memb.description || "(no description)"}</p>
+					<p className="App-description">{memb.description || "(no description)"}</p>
 				</div>
 				);
 			}

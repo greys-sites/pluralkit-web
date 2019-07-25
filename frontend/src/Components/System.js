@@ -5,7 +5,6 @@ class System extends Component {
 	constructor(props) {
 		super(props);
 
-		console.log(this.props)
 		this.state = {
 			sys: this.props.sys,
 			edit: false

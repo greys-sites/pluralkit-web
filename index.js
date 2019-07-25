@@ -1,237 +1,201 @@
-const cookieParser = require("cookie-parser");
-const ejsLint = require('ejs-lint');
-const express = require("express");
-const fetch = require("node-fetch");
+const express = require('express');
+const path = require('path');
+const fetch = require('node-fetch');
+const fs = require('fs');
 
 const app = express();
 
-const API_URL = process.env.API_URL || "https://api.pluralkit.me";
-
-app.set("view engine", "ejs");
-app.set("views", "./views");
-
-app.use(express.static("./public"));
+app.use(require('cookie-parser')());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
-async function setup() {
 
-	app.get("/", (req, res) => {
-		var token = undefined;
-		if(req.cookies) {
-			token = req.cookies.token ? req.cookies.token : undefined;
-		}
-		res.render("pages/index.ejs", { members: [{name: "Enter token above. You can get this by using 'pk;token'"}], member: undefined, token: token, system: undefined})
-	});
+app.get('/api/user', async (req,res)=> {
+    if(!req.cookies.user) return res.status(404).send(undefined);
+    else {
+        var token = req.cookies.user;
+        var user = await fetch('https://api.pluralkit.me/s', {
+            headers: {
+                Authorization: token
+            }
+        })
+        if(user.status != 200) {
+            res.status(404).send(undefined)
+        } else {
+            user = await user.json();
+            user.token = req.cookies.user;
+            user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+            try {
+                user.fronters = await (await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters")).json()
+            } catch(e) {
+                user.fronters = {}
+            }
 
-	app.get("/system/:id",async (req,res)=>{
-		var sys = await fetch(`${API_URL}/s/${req.params.id}`);
-		if(sys.status == 200) {
-			var sysdat = await sys.json();
-			var membs = await fetch(`${API_URL}/s/${req.params.id}/members`);
-			var membdat = await membs.json();
-			membdat = await membdat.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
-			res.render("pages/profile.ejs",{system: sysdat, members: membdat, token: req.cookies.token || undefined, member: req.body.member || undefined});
-		} else if(sys.status == 404) {
-			res.send("System profile not found :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
-		} else {
-			res.send("Something went wrong :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
-		}
-	})
+            res.status(200).send(user)
+        }
+    }
+})
 
-	app.post("/system/:id",async (req,res)=>{
-		var sys = await fetch(`${API_URL}/s/${req.params.id}`);
-		if(sys.status == 200) {
-			var sysdat = await sys.json();
-			var membs = await fetch(`${API_URL}/s/${req.params.id}/members`);
-			var membdat = await membs.json();
-			membdat = await membdat.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
-			res.render("pages/profile.ejs",{system: sysdat, members: membdat, token: req.cookies.token || undefined, member: req.body.member || undefined});
-		} else if(sys.status == 404) {
-			res.send("System profile not found :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
-		} else {
-			res.send("Something went wrong :(<br/><a href='https://pk.greysdawn.tk/'>go back</a>")
-		}
-	})
+app.get('/api/user/:id', async (req,res)=> {
+    var user = await fetch('https://api.pluralkit.me/s/'+req.params.id);
+    if(user.status != 200) {
+        res.status(404).send(undefined)
+    } else {
+        user = await user.json();
+        user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+        try {
+            user.fronters = await (await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters")).json()
+        } catch(e) {
+            user.fronters = {}
+        }
 
-	app.post("/dashboard", (req, res) => {
-		if(!req.body.token && !req.cookies.token) return res.send("ERROR: system token not supplied");
-		if(req.body.token && !req.cookies.token) res.cookie("token",req.body.token, {expires: new Date("01/01/2030")});
-		fetch(API_URL + "/s",{
-			headers: {
-				"Authorization": req.cookies.token || req.body.token
-			}
-		}).then(async resp=>{
-			if(resp.status == "404") return res.send("ERROR: system not found");
-			var sys = await resp.json();
-			fetch(`${API_URL}/s/${sys.id}/members`).then(async resp2=>{
-				var members = await resp2.json();
-				var membcount = members.length;
-				fetch(`${API_URL}/s/${sys.id}/switches`).then(async resp3=>{
-					var data = await resp3.json();
-					var fronter_ids = (data[0] ? data[0].members : []);
-					var fronters = members.filter(m => fronter_ids.includes(m.id));
-					res.render("pages/dashboard.ejs",{members: membcount, member: ((fronters[0] ? ", " +fronters[0].name : (sys.name ? ", "+ sys.name : ""))), fronters: (fronters || []), system: sys, token: req.cookies.token, edit: false});
-				})
-			})
-			
-		})
-	})
+        res.status(200).send(user)
+    }
+})
 
-	app.get("/dashboard",(req,res)=>{
-		if(!req.cookies.token) return res.send("ERROR: system token not supplied");
-		fetch(API_URL + "/s",{
-			headers: {
-				"Authorization": req.cookies.token
-			}
-		}).then(async resp=>{
-			if(resp.status == "404") return res.send("ERROR: system not found");
-			var sys = await resp.json();
-			fetch(`${API_URL}/s/${sys.id}/members`).then(async resp2=>{
-				var members = await resp2.json();
-				var membcount = members.length;
-				fetch(`${API_URL}/s/${sys.id}/switches`).then(async resp3=>{
-					var data = await resp3.json();
-					var fronter_ids = (data[0] ? data[0].members : []);
-					var fronters = members.filter(m => fronter_ids.includes(m.id));
-					res.render("pages/dashboard.ejs",{members: membcount, member: ((fronters[0] ? ", " +fronters[0].name : (sys.name ? ", "+ sys.name : ""))), fronters: (fronters || []), system: sys, token: req.cookies.token, edit: false});
-				})
-			})
-		})
-	})
+app.post('/api/login', async (req,res)=> {
+    var sys = await fetch('https://api.pluralkit.me/s', {
+        method: "GET",
+        headers: {
+            "Authorization": req.body.token
+        }
+    })
+    if(sys.status != 200) {
+        res.status(404).send(undefined);
+    } else {
+        sys = await sys.json();
+        sys.token = req.body.token;
+        sys.members = (await (await fetch('https://api.pluralkit.me/s/'+sys.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+        try {
+            sys.fronters = await (await fetch('https://api.pluralkit.me/s/'+sys.id+"/fronters")).json()
+        } catch(e) {
+            sys.fronters = {}
+        }
+        res.cookie('user',req.body.token)
+        res.status(200).send(sys)
+    }
+})
 
-	app.get("/members",(req,res)=>{
-			if(!req.cookies.token) return res.send("ERROR: system token not supplied");
-		fetch(API_URL + "/s",{
-			headers: {
-				"Authorization": req.cookies.token
-			}
-		}).then(async resp=>{
-			if(resp.status == "404") return res.send("ERROR: system not found");
-			var sys = await resp.json();
-			fetch(`${API_URL}/s/${sys.id}/members`).then(async resp2=>{
-				var membs = await resp2.json();
-				membs = await membs.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
-				res.render("pages/members.ejs",{members: membs, member: (req.body.member || undefined), system: sys, token: req.cookies.token, edit: (req.body.edit || false)});
-			})
-		})
-	})
+app.get('/api/logout', async (req,res)=> {
+    res.clearCookie('user');
+    res.status(200).send(null)
+})
 
-	app.post("/members",(req,res)=>{
-		if(!req.cookies.token) return res.send("ERROR: system token not supplied");
-		fetch(API_URL + "/s",{
-			headers: {
-				"Authorization": req.cookies.token
-			}
-		}).then(async resp=>{
-			if(resp.status == "404") return res.send("ERROR: system not found");
-			var sys = await resp.json();
-			fetch(`${API_URL}/s/${sys.id}/members`).then(async resp2=>{
-				var membs = await resp2.json();
-				membs = await membs.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
-				res.render("pages/members.ejs",{members: membs, member: (req.body.member || undefined), system: sys, token: req.cookies.token, edit: (req.body.edit || false), action_type: (req.body.action_type || undefined)});
-			})
-		})
-	})
+app.get('/pkapi/*', async (req,res) => {
+    var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+        headers: {
+            "Authorization": req.get("Authorization")
+        }
+    })
 
-		app.post("/submit",(req,res)=>{
-			if(!req.body.action_type) return res.send("ERROR: action type not supplied");
-			if(!req.body.token && !req.cookies.token) return res.send("ERROR: system token not supplied")
-			var token = req.body.token || req.cookies.token;
-			switch(req.body.action_type){
-				case "memberedit":
-					if(!req.body.member) return res.send("ERROR: memberedit action type; member not supplied");
-					var member = JSON.parse(req.body.member);
-					req.body.system = req.body.system.id ? req.body.system : JSON.parse(req.body.system);
-					req.body.birthday = req.body.birthday == "" ? null : req.body.birthday;
-					req.body.prefix = req.body.prefix == "" ? null : req.body.prefix;
-					req.body.suffix == "" ? null : req.body.suffix;
-					fetch(`${API_URL}/m/${member.id}`,{
-						method: "PATCH",
-						headers: {
-							"Authorization": token
-						},
-						body: JSON.stringify(req.body)
-					}).then(async resp => {
-						switch(resp.status.toString()) {
-							case "401":
-								res.send("ERROR: unauthorized (your token may be wrong)");
-								break;
-							case "400":
-								res.send("ERROR: bad request. something went wrong :(")
-								break;
-							default:
-								var data = await resp.text();
-								res.render("pages/submit.ejs",{member: (data), system: req.body.system});
-								break;
-						}
-					})
-					break;
-				case "membercreate":
-					if(!req.body.member) return res.send("ERROR: memberedit action type; member not supplied");
-					var member = JSON.parse(req.body.member);
-					var body = req.body;
-					body.system = body.system.id ? body.system : JSON.parse(body.system);
-					body.birthday = body.birthday == "" ? null : body.birthday;
-					fetch(`${API_URL}/m`,{
-						method: "POST",
-						headers: {
-							"Authorization": token
-						},
-						body: JSON.stringify({"name": body.name})
-					}).then(async resp => {
-						var dat = await resp.json();
-						switch(resp.status.toString()) {
-							case "401":
-								res.send("ERROR: unauthorized (your token may be wrong)");
-								break;
-							case "400":
-								res.send("ERROR: bad request. something went wrong :(")
-								break;
-							case "500":
-								res.send("ERROR: server borked :'3");
-								break;
-							default:
+    var data;
 
-								var membdat = await fetch(API_URL + "/m/" + (dat.id),{
-									method: "PATCH",
-									headers: {
-										"Authorization": token
-									},
-									body: JSON.stringify(body)
-								});
-								var data = await membdat.json();
-								res.render("pages/submit.ejs",{member: JSON.stringify(data), system: JSON.stringify(body.system)});
-								break;
-						}
-					})
-					break;
-				case "memberdelete":
-					fetch(`${API_URL}/m/${JSON.parse(req.body.member).id}`,{
-						method: "DELETE",
-						headers: {
-							"Authorization": token
-						}
-					}).then(async resp =>{
-						res.render("pages/submit.ejs",{member: undefined, system: JSON.stringify(req.body.system)});
-					});
-					break;
-				default:
-					res.send("Something went wrong :(")
-					break;
-			}
-		})
+    if(result.status >= 200 && result.status < 300) {
+        data = await result.json();
+    } else {
+        data = {};
+    }
 
-		app.get("/login",(req,res)=>{
-			res.render("pages/login.ejs");
-		})
+    res.status(result.status).send(data);
+});
 
-		app.get("/logout",(req,res)=>{
-			res.clearCookie("token");
-			res.render("pages/logout.ejs");
-		})
-}
+app.post('/pkapi/*', async (req,res) => {
+    var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+        method: "POST",
+        body: JSON.stringify(req.body),
+        headers: {
+            "Authorization": req.get("Authorization"),
+            "Content-Type": "application/json"
+        }
+    })
 
-setup();
-app.listen(process.env.PORT || 8081);
+    var data;
+
+    if(result.status >= 200 && result.status < 300) {
+        data = await result.json();
+    } else {
+        data = {};
+    }
+
+    res.status(result.status).send(data);
+});
+
+app.patch('/pkapi/*', async (req,res) => {
+    var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+        method: "PATCH",
+        body: JSON.stringify(req.body),
+        headers: {
+            "Authorization": req.get("Authorization"),
+            "Content-Type": "application/json"
+        }
+    })
+
+    var data;
+
+    if(result.status >= 200 && result.status < 300) {
+        try {
+            data = await result.json();
+        } catch(e) {
+            data = {};
+        }
+    } else {
+        data = {};
+    }
+
+    res.status(result.status).send(data);
+});
+
+app.get("/profile/:id", async (req, res)=> {
+    var prof = await fetch('https://api.pluralkit.me/s/'+req.params.id);
+    if(prof.status != 200) {
+        var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+        index = index.replace('$TITLE','404 || PluralKit Web');
+        index = index.replace('$DESC','System not found');
+        index = index.replace('$TWITDESC','System not found');
+        index = index.replace('$TWITTITLE','404 || PluralKit Web');
+        index = index.replace('$OGTITLE','404 || PluralKit Web');
+        index = index.replace('$OGDESC','System not found');
+        index = index.replace('$OEMBED','oembed.json');
+        res.send(index);
+    } else {
+        prof = await prof.json();
+        var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+        index = index.replace('$TITLE',prof.name+' || PluralKit Web');
+        index = index.replace('$DESC','System on PluralKit');
+        index = index.replace('$TWITDESC','System on PluralKit');
+        index = index.replace('$TWITTITLE',prof.name+' || PluralKit Web');
+        index = index.replace('$OGTITLE',prof.name+' || PluralKit Web');
+        index = index.replace('$OGDESC','System on PluralKit');
+        index = index.replace('$OEMBED','oembed.json');
+        res.send(index);
+    }
+})
+
+app.get("/", async (req, res)=> {
+    var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+    index = index.replace('$TITLE','PluralKit Web');
+    index = index.replace('$DESC','Web interface for PluralKit');
+    index = index.replace('$TWITDESC','Web interface for PluralKit');
+    index = index.replace('$TWITTITLE','PluralKit Web');
+    index = index.replace('$OGTITLE','PluralKit Web');
+    index = index.replace('$OGDESC','Web interface for PluralKit');
+    index = index.replace('$OEMBED','oembed.json');
+    res.send(index);
+})
+
+app.use(express.static(path.join(__dirname, 'frontend/build')));
+
+app.use("/*", async (req, res, next)=> {
+    var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+    index = index.replace('$TITLE','PluralKit Web');
+    index = index.replace('$DESC','Web interface for PluralKit');
+    index = index.replace('$TWITDESC','Web interface for PluralKit');
+    index = index.replace('$TWITTITLE','PluralKit Web');
+    index = index.replace('$OGTITLE','PluralKit Web');
+    index = index.replace('$OGDESC','Web interface for PluralKit');
+    index = index.replace('$OEMBED','oembed.json');
+    res.send(index);
+})
+
+const port = process.env.PORT || 8080;
+app.listen(port);

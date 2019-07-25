@@ -60,7 +60,7 @@ class App extends Component {
 			</a>
 			<div className="App-buttons">
 			{this.state.user &&
-				<a className="App-button" onClick={()=>this.logOut()}>Logout</a>
+				<button className="App-button" onClick={()=>this.logOut()}>Logout</button>
 			}
 			</div>
 			</header>
