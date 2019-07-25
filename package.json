@@ -15,7 +15,7 @@
     "react-scripts": "2.1.8"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "heroku-postbuild": "cd frontend && npm install --only=dev && npm install && npm run build",
     "build": "cd frontend && yarn build && cd .. && node index.js"
   },
