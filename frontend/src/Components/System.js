@@ -24,8 +24,7 @@ class System extends Component {
 				<p className={sys.tag ? "" : "App-hidden"}><strong>Tag:</strong> {sys.tag}</p>
 				<p><strong>Member count:</strong> {membs ? membs.length : "No members found"}</p>
 				<p><strong>Current fronter{frnt && frnt.members && frnt.members.length > 1 ? 's' : ''}:</strong> {frnt && frnt.members ? frnt.members.map(m => m.name).join(", ") : "None"}</p>
-				<br/>
-				{sys.description && <p className="App-scroll"><strong>Description: </strong>{sys.description}</p>}
+				{sys.description && <div><p><strong>Description:</strong></p><p className="App-description">{sys.description}</p></div>}
 				</div>
 				</div>
 			);
