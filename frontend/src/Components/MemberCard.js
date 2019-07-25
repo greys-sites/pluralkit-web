@@ -1,9 +1,35 @@
 import React, { Component, Fragment as Frag } from 'react';
+import showdown from 'showdown';
+import sanitize from 'sanitize-html';
+
+showdown.setOption('simplifiedAutoLink', true);
+showdown.setOption('simpleLineBreaks', true);
+showdown.setOption('openLinksInNewWindow', true);
+showdown.setOption('underline', true);
+showdown.setOption('strikethrough', true);
+
+var conv = new showdown.Converter();
+
 
 class MemberCard extends Component {
 	constructor(props) {
 		super(props);
-
+		this.props.member.tmpdescription = sanitize(conv.makeHtml(this.props.member.description),
+			{
+				allowedTags: [
+					'em',
+					'strong',
+					'i',
+					'b',
+					'del',
+					'u',
+					'p',
+					'a',
+					'code',
+					'pre',
+					'br'
+				]
+			});
 		this.state = {
 			key: 	this.props.key,
 			member: this.props.member,
@@ -57,7 +83,23 @@ class MemberCard extends Component {
 			this.setState((state)=> {
 				state.submitted = true;
 				state.member = this.state.edit.member;
-				state.edit= {enabled: false};
+				state.member.tmpdescription = sanitize(conv.makeHtml(this.state.edit.member.description),
+				{
+					allowedTags: [
+						'em',
+						'strong',
+						'i',
+						'b',
+						'del',
+						'u',
+						'p',
+						'a',
+						'code',
+						'pre',
+						'br'
+					]
+				});
+				state.edit = {enabled: false, member: null};
 				return state;
 			})
 		} else {
@@ -67,9 +109,7 @@ class MemberCard extends Component {
 
 	render() {
 		var memb = this.state.member;
-		console.log(this.state.member);
 		var edit = this.state.edit;
-		console.log(this.state.edit.member);
 		if(memb) {
 			if(edit.enabled) {
 				return (
@@ -95,7 +135,7 @@ class MemberCard extends Component {
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
 					<span className="App-tagline">{memb.prefix}text{memb.suffix}</span>
 					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
-					<p className="App-description">{memb.description || "(no description)"}</p>
+					<div className="App-description" dangerouslySetInnerHTML={{__html: memb.tmpdescription || "<p>(no description)</p>"}}></div>
 				</div>
 				);
 			}
