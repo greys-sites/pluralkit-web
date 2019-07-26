@@ -18,6 +18,16 @@ body {
   align-items: center;
 }
 
+.App-spoiler {
+  background-color: black;
+  color: black;
+}
+
+.App-spoiler:hover {
+  background-color: rgba(0,0,0,.5);
+  color: white;
+}
+
 .App-avatar {
   float: left;
   object-fit: cover;
@@ -231,6 +241,9 @@ div p {
   padding: 20px;
 }
 
-@media (max-width: 820px) {
-
+blockquote {
+  margin: 5px 10px;
+  font-family: 'Roboto Mono', monospace;
+  background-color: rgba(0,0,0,.25);
+  border-radius: 5px;
 }

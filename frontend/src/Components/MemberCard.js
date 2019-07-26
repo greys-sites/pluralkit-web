@@ -8,6 +8,21 @@ showdown.setOption('openLinksInNewWindow', true);
 showdown.setOption('underline', true);
 showdown.setOption('strikethrough', true);
 
+var tags = [
+				'em',
+				'strong',
+				'i',
+				'b',
+				'del',
+				'u',
+				'p',
+				'a',
+				'code',
+				'pre',
+				'br',
+				'blockquote'
+			]
+
 var conv = new showdown.Converter();
 
 
@@ -16,20 +31,9 @@ class MemberCard extends Component {
 		super(props);
 		this.props.member.tmpdescription = sanitize(conv.makeHtml(this.props.member.description),
 			{
-				allowedTags: [
-					'em',
-					'strong',
-					'i',
-					'b',
-					'del',
-					'u',
-					'p',
-					'a',
-					'code',
-					'pre',
-					'br'
-				]
+				allowedTags: tags
 			});
+		this.props.member.tmpdescription = this.props.member.tmpdescription.replace(/\|{2}(.*?)\|{2}/gs, "<span class='App-spoiler'>$1</span>");
 		this.state = {
 			key: 	this.props.key,
 			member: this.props.member,
@@ -51,7 +55,7 @@ class MemberCard extends Component {
 	cancelEdit = ()=> {
 		this.setState((state)=> {
 			state.edit = {enabled: false, member: null};
-			state.member = this.props.member;
+			state.member = this.state.member;
 			return state;
 		})
 	}
@@ -85,20 +89,9 @@ class MemberCard extends Component {
 				state.member = this.state.edit.member;
 				state.member.tmpdescription = sanitize(conv.makeHtml(this.state.edit.member.description),
 				{
-					allowedTags: [
-						'em',
-						'strong',
-						'i',
-						'b',
-						'del',
-						'u',
-						'p',
-						'a',
-						'code',
-						'pre',
-						'br'
-					]
+					allowedTags: tags
 				});
+				state.member.tmpdescription = state.member.tmpdescription.replace(/\|{2}(.*?)\|{2}/gs, "<span class='App-spoiler'>$1</span>");
 				state.edit = {enabled: false, member: null};
 				return state;
 			})
