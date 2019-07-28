@@ -8,6 +8,7 @@ import Profile from './Components/Profile';
 import Dashboard from './Components/Dashboard';
 import Footer from './Components/Footer';
 import Login from './Components/Login';
+import Loading from './Components/Loading';
 
 class App extends Component {
 
@@ -50,7 +51,7 @@ class App extends Component {
 	}
 
 	render() {
-		if(!this.state.check) return null;
+		if(!this.state.check) return <Loading />;
 		return (
 			<div className="App">
 			<Router>
@@ -92,32 +93,6 @@ class App extends Component {
 			);
 	}
 }
-
-// <Route exact path="/logout" component={Logout} />
-// <Route exact path="/submit" component={Submit} />
-// Route path="/logout" component={Logout} />
-
-// class Submit extends Component {
-// 	constructor() {
-// 		super();
-
-// 		this.state = {ready: false};
-// 	}
-
-// 	componentDidMount() {
-// 		setTimeout(()=>{
-// 			this.setState({ready: true});
-// 		},1000)
-// 	}
-// 	render() {
-// 		return(
-// 			<Fragment>
-// 			<p>Done! Redirecting...</p>
-// 			{(this.state && this.state.ready) && <Redirect to="/" />}
-// 			</Fragment>
-// 		);
-// 	}
-// }
 
 
 export default App;

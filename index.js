@@ -91,7 +91,11 @@ app.get('/pkapi/*', async (req,res) => {
     var data;
 
     if(result.status >= 200 && result.status < 300) {
-        data = await result.json();
+        try {
+            data = await result.json();
+        } catch(e) {
+            data = {};
+        }
     } else {
         data = {};
     }
@@ -112,7 +116,11 @@ app.post('/pkapi/*', async (req,res) => {
     var data;
 
     if(result.status >= 200 && result.status < 300) {
-        data = await result.json();
+        try {
+            data = await result.json();
+        } catch(e) {
+            data = {};
+        }
     } else {
         data = {};
     }

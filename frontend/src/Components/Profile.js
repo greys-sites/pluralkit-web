@@ -1,6 +1,7 @@
 import React, { Component, Fragment as Frag } from 'react';
 import System from './System';
 import MemberList from './MemberList';
+import Loading from './Loading';
 
 class Profile extends Component {
 
@@ -26,7 +27,8 @@ class Profile extends Component {
 		if(this.state.user && this.state.user != "404") {
 			return (
 				<Frag>
-				<System sys={this.state.user} />
+				<h1 style={{textAlign: 'center'}}>System</h1>
+				<System sys={this.state.user} editable={false} />
 				<h1 style={{textAlign: 'center'}}>Members</h1>
 				<MemberList members={this.state.user.members} editable={false} token={null} />
 				</Frag>
@@ -37,7 +39,7 @@ class Profile extends Component {
 			);
 		} else {
 			return (
-				<p>Loading...</p>
+				<Loading />
 			);
 		}
 	}

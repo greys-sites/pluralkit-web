@@ -130,16 +130,16 @@ body {
   margin-right: 10px;
 }
 
-.App-memberCard input {
+input {
   width: 90%;
 }
 
-.App-memberCard textarea {
+textarea {
   width: 90%;
   height: 100%;
 }
 
-.App-memberCard input, .App-memberCard textarea {
+input, textarea {
     width: 90%;
     background-color: #20202b;
     color: white;
@@ -149,6 +149,7 @@ body {
     font-size: calc(12px + 1vmin);
     border: none;
     border-radius: 5px;
+    box-shadow: 0 0 0 2px #414361
 }
 
 .App-memberCard h1 {
@@ -179,6 +180,14 @@ body {
 
 .App-description::-webkit-scrollbar, .App-memberCard textarea::-webkit-scrollbar {
     width: 5px;
+}
+
+.App-edit {
+  animation: edit .5s 1;
+}
+
+.App-unedit {
+  animation: edit .5s 1;
 }
 
 .App-buttons {
@@ -246,4 +255,52 @@ blockquote {
   font-family: 'Roboto Mono', monospace;
   background-color: rgba(0,0,0,.25);
   border-radius: 5px;
+}
+
+.App-load{
+  height: 87vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.App-ball {
+  display: inline-block;
+  height: 50px;
+  width: 50px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,.1);
+  animation: pulse 2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 rgba(255,255,255,.5);
+  }
+  
+  100% {
+    box-shadow: 0 0 5px 40px rgba(0,0,0,0);
+  }
+}
+
+@keyframes edit {
+  10% {
+    transform: scale(1, 1);
+  }
+  20% {
+    transform: scale(1.1, 1.1);
+  }
+  50% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(1,1);
+  }
 }
