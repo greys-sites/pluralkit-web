@@ -153,6 +153,19 @@ app.patch('/pkapi/*', async (req,res) => {
     res.status(result.status).send(data);
 });
 
+//DELETE route (to be implemented)
+// app.delete('/pkapi/*', async (req,res) => {
+//     var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+//         method: "DELETE",
+//         headers: {
+//             "Authorization": req.get("Authorization"),
+//             "Content-Type": "application/json"
+//         }
+//     })
+
+//     res.status(result.status).send({});
+// });
+
 app.get("/profile/:id", async (req, res)=> {
     var prof = await fetch('https://api.pluralkit.me/s/'+req.params.id);
     if(prof.status != 200) {

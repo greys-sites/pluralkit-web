@@ -35,7 +35,7 @@ class Profile extends Component {
 			);
 		} else if(this.state.user == "404") {
 			return (
-				<p>System not found D:</p>
+				<p>System not found.</p>
 			);
 		} else {
 			return (

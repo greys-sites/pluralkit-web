@@ -108,12 +108,12 @@ class System extends Component {
 					<form onSubmit={this.handleSubmit} className="App-syscontainer">
 						<img className="App-avatar" src={edit.vals.avatar_url ? edit.vals.avatar_url : "/default.png"} alt="System avatar" />
 						<div className="App-systeminfo">
-						<input type="text" name="avatar_url" onChange={(e)=>this.handleChange("avatar_url", e)} value={edit.vals.avatar_url} />
-						<input type="text" name="name" onChange={(e)=>this.handleChange("name", e)} value={edit.vals.name} />
-						<input type="text" name="tag" onChange={(e)=>this.handleChange("tag", e)} value={edit.vals.tag} />
+						<input placeholder="avatar url" type="text" name="avatar_url" onChange={(e)=>this.handleChange("avatar_url", e)} value={edit.vals.avatar_url} />
+						<input placeholder="name" type="text" name="name" onChange={(e)=>this.handleChange("name", e)} value={edit.vals.name} />
+						<input placeholder="tag" type="text" name="tag" onChange={(e)=>this.handleChange("tag", e)} value={edit.vals.tag} />
 						<p><strong>Member count:</strong> {membs ? membs.length : "No members found"}</p>
 						<p><strong>Current fronter{frnt && frnt.members && frnt.members.length > 1 ? 's' : ''}:</strong> {frnt && frnt.members ? frnt.members.map(m => m.name).join(", ") : "None"}</p>
-						<textarea onChange={(e)=>this.handleChange("description",e)}>{edit.vals.description}</textarea>
+						<textarea placeholder="description" onChange={(e)=>this.handleChange("description",e)}>{edit.vals.description}</textarea>
 						<div><button className="App-button" type="submit">Save</button> <button className="App-button" type="button" onClick={this.cancelEdit}>Cancel</button></div>
 						</div>
 					</form>

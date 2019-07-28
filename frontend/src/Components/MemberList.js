@@ -61,6 +61,28 @@ class MemberList extends Component {
 		}
 	}
 
+	// delete function (to be implemented)
+	// deleteMember = (id) => {
+	// 	var res = await fetch('/pkapi/m', {
+	// 		method: "DELETE",
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 			"Authorization": this.state.token
+
+	// 		}
+	// 	});
+
+	// 	if(res.status == 200) {
+	// 		this.setState((state)=> {
+	// 			state.deleted = true;
+	// 			state.members = state.members.filter(m => m.id != id);
+	// 			return state;
+	// 		})
+	// 	} else {
+	// 		this.setState({delete: false});
+	// 	}
+	// }
+
 	render() {
 		var edit = this.state.edit;
 		return (
@@ -89,7 +111,7 @@ class MemberList extends Component {
 	            {
             	this.state.members.map((m) => {
             		return (
-            			<MemberCard key={m.id} member={m} editable={this.state.editable} token={this.state.token}/>
+            			<MemberCard key={m.id} member={m} editable={this.state.editable} token={this.state.token} deleteMember={this.deleteMember}/>
             		)
             	})
 	            }
