@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment as Frag } from 'react';
 import MemberCard from './MemberCard';
 
 class MemberList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {members: this.props.members, editable: this.props.editable, token: this.props.token, edit: {enabled: false}, editClass: ''};
+		this.state = {members: this.props.members, editable: this.props.editable, token: this.props.token, edit: {enabled: false}, editClass: '', query: null};
 	}
 
 	enableEdit = ()=> {
@@ -23,6 +23,12 @@ class MemberList extends Component {
 			state.member = this.state.member;
 			return state;
 		})
+	}
+
+	searchMembers = (e) => {
+		e.preventDefault();
+		var val = e.target.value ? e.target.value : null;
+		this.setState({query: val});
 	}
 
 	handleChange = (name, e) => {
@@ -85,7 +91,10 @@ class MemberList extends Component {
 
 	render() {
 		var edit = this.state.edit;
+		var query = this.state.query;
 		return (
+			<Frag>
+			<input style={{marginBottom: '20px', width: '200px'}} type="text" name="search" placeholder="search" value={query ? query : null} onChange={this.searchMembers} />
 			<section className="App-memberList">
 				{this.props.editable && 
 				(edit.enabled ?
@@ -101,21 +110,28 @@ class MemberList extends Component {
 				
 					<div><button className="App-button" type="submit">Save</button> <button className="App-button" type="button" onClick={this.cancelEdit}>Cancel</button></div>
 				</form> :
-				<div className={`App-memberCard ${this.state.editClass}`} style={{"cursor": (this.state.editable ? "pointer" : "default")}} onClick={()=> this.enableEdit()}>
-					<h1 style={{fontSize: 'calc(72px + 2vmin)', opacity: .5}}>
-						+
-					</h1>
-				</div>
+				!query &&
+					(<div className={`App-memberCard ${this.state.editClass}`} style={{"cursor": (this.state.editable ? "pointer" : "default")}} onClick={()=> this.enableEdit()}>
+						<h1 style={{fontSize: 'calc(72px + 2vmin)', opacity: .5}}>
+							+
+						</h1>
+					</div>)
+				
 				)
 				}
 	            {
-            	this.state.members.map((m) => {
-            		return (
-            			<MemberCard key={m.id} member={m} editable={this.state.editable} token={this.state.token} deleteMember={this.deleteMember}/>
-            		)
+	            	this.state.members.map((m) => {
+	            		if(query)
+	            			if(m.name.toLowerCase().includes(query.toLowerCase()))
+		            			return ( <MemberCard key={m.id} member={m} editable={this.state.editable} token={this.state.token} deleteMember={this.deleteMember}/> )
+		            		else
+		            			return ( null )
+	            		else
+	            			return ( <MemberCard key={m.id} member={m} editable={this.state.editable} token={this.state.token} deleteMember={this.deleteMember}/> )
             	})
 	            }
 	        </section>
+	        </Frag>
 		)
 	}
 }

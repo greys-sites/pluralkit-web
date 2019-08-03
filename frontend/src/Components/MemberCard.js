@@ -21,7 +21,7 @@ var tags = [
 				'pre',
 				'br',
 				'blockquote'
-			]
+			];
 
 var conv = new showdown.Converter();
 

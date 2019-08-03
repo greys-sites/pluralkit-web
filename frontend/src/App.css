@@ -257,6 +257,12 @@ blockquote {
   border-radius: 5px;
 }
 
+code {
+  font-family: 'Roboto Mono', monospace;
+  background-color: rgba(0,0,0,.25);
+  padding: 5px;
+}
+
 .App-load{
   height: 87vh;
   width: 100%;
