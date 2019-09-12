@@ -59,7 +59,7 @@ class MemberList extends Component {
 			this.setState((state)=> {
 				state.submitted = true;
 				state.members.push(member);
-				state.members = state.members.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+				state.members = state.members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
 				state.edit = {enabled: false, member: null};
 				return state;
 			})

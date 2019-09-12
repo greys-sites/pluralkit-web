@@ -136,9 +136,10 @@ class MemberCard extends Component {
 				return (
 				<div className="App-memberCard" style={{"cursor": (this.state.editable ? "pointer" : "default")}} onClick={()=> this.enableEdit(memb)}>
 					<h1>
-						{memb.name.toUpperCase()} ({memb.id})
+						{memb.display_name ? memb.display_name.toUpperCase() : memb.name.toUpperCase()} ({memb.id})
 					</h1>
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
+					{memb.display_name && <span className="App-tagline">aka{memb.name}</span>}
 					<span className="App-tagline">{memb.prefix}text{memb.suffix}</span>
 					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
 					<div className="App-description" dangerouslySetInnerHTML={{__html: memb.tmpdescription || "<p>(no description)</p>"}}></div>
