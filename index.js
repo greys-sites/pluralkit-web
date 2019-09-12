@@ -24,7 +24,7 @@ app.get('/api/user', async (req,res)=> {
         } else {
             user = await user.json();
             user.token = token;
-            user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+            user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
             try {
                 user.fronters = await (await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters")).json()
             } catch(e) {
@@ -153,18 +153,17 @@ app.patch('/pkapi/*', async (req,res) => {
     res.status(result.status).send(data);
 });
 
-//DELETE route (to be implemented)
-// app.delete('/pkapi/*', async (req,res) => {
-//     var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
-//         method: "DELETE",
-//         headers: {
-//             "Authorization": req.get("Authorization"),
-//             "Content-Type": "application/json"
-//         }
-//     })
+app.delete('/pkapi/*', async (req,res) => {
+    var result = await fetch(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": req.get("Authorization"),
+            "Content-Type": "application/json"
+        }
+    })
 
-//     res.status(result.status).send({});
-// });
+    res.status(result.status).send({});
+});
 
 app.get("/profile/:id", async (req, res)=> {
     var prof = await fetch('https://api.pluralkit.me/s/'+req.params.id);

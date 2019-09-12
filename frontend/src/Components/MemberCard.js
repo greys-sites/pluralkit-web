@@ -44,7 +44,7 @@ class MemberCard extends Component {
 			editable: this.props.editable,
 			token: this.props.token,
 			submitted: false,
-			deleteMember: this.props.deleteMember //to be implemented
+			deleteMember: this.props.deleteMember
 		}
 	}
 
@@ -68,7 +68,7 @@ class MemberCard extends Component {
 		const n = name;
 		const val = e.target.value;
 		this.setState((state) => {
-			state.edit.member[n] = val;
+			state.edit.member[n] = val != "" ? val : null;
 			return state;
 		})
 	}
@@ -98,6 +98,8 @@ class MemberCard extends Component {
 					});
 					state.member.tmpdescription = state.member.tmpdescription.replace(/\|{2}(.*?)\|{2}/gs, "<span class='App-spoiler' onclick='event.stopPropagation()'>$1</span>");
 					
+				} else {
+					state.member.tmpdescription = null;
 				}
 				state.edit = {enabled: false, member: null};
 				return state;
@@ -126,6 +128,7 @@ class MemberCard extends Component {
 					<div>
 					<button className="App-button" type="submit">Save</button>{" "}
 					<button className="App-button" type="button" onClick={this.cancelEdit}>Cancel</button>
+					<button className="App-button" type="button" onClick={()=>this.state.deleteMember(memb.id)}>Delete</button>
 					</div>
 				</form>
 				)

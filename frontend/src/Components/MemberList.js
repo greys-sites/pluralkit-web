@@ -35,7 +35,7 @@ class MemberList extends Component {
 		const n = name;
 		const val = e.target.value;
 		this.setState((state) => {
-			state.edit.member[n] = val;
+			state.edit.member[n] = val != "" ? val : null;
 			return state;
 		})
 	}
@@ -55,9 +55,10 @@ class MemberList extends Component {
 		});
 
 		if(res.status == 200) {
+			var member = await res.json();
 			this.setState((state)=> {
 				state.submitted = true;
-				state.members.unshift(state.edit.member);
+				state.members.push(member);
 				state.members = state.members.sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
 				state.edit = {enabled: false, member: null};
 				return state;
@@ -67,27 +68,26 @@ class MemberList extends Component {
 		}
 	}
 
-	// delete function (to be implemented)
-	// deleteMember = (id) => {
-	// 	var res = await fetch('/pkapi/m', {
-	// 		method: "DELETE",
-	// 		headers: {
-	// 			"Content-Type": "application/json",
-	// 			"Authorization": this.state.token
+	deleteMember = async (id) => {
+		var res = await fetch('/pkapi/m/'+id, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": this.state.token
 
-	// 		}
-	// 	});
+			}
+		});
 
-	// 	if(res.status == 200) {
-	// 		this.setState((state)=> {
-	// 			state.deleted = true;
-	// 			state.members = state.members.filter(m => m.id != id);
-	// 			return state;
-	// 		})
-	// 	} else {
-	// 		this.setState({delete: false});
-	// 	}
-	// }
+		if(res.status == 200) {
+			this.setState((state)=> {
+				state.deleted = true;
+				state.members = state.members.filter(m => m.id != id);
+				return state;
+			})
+		} else {
+			this.setState({delete: false});
+		}
+	}
 
 	render() {
 		var edit = this.state.edit;
