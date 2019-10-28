@@ -143,7 +143,7 @@ class MemberCard extends Component {
 					</h1>
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
 					{memb.display_name && <span className="App-tagline">aka {memb.name}</span>}
-					<span className="App-tagline">{memb.prefix}text{memb.suffix}</span>
+					{(memb.prefix || memb.suffix) && <span className="App-tagline">{memb.prefix}text{memb.suffix}</span>}
 					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
 					<div className="App-description" dangerouslySetInnerHTML={{__html: memb.tmpdescription || "<p>(no description)</p>"}}></div>
 				</div>
