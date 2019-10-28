@@ -44,7 +44,8 @@ class MemberCard extends Component {
 			editable: this.props.editable,
 			token: this.props.token,
 			submitted: false,
-			deleteMember: this.props.deleteMember
+			deleteMember: this.props.deleteMember,
+			onEdit: this.props.onEdit
 		}
 	}
 
@@ -88,7 +89,7 @@ class MemberCard extends Component {
 		});
 
 		if(res.status == 200) {
-			this.setState((state)=> {
+			await this.setState((state)=> {
 				state.submitted = true;
 				state.member = this.state.edit.member;
 				if(state.member.description) {
@@ -104,6 +105,7 @@ class MemberCard extends Component {
 				state.edit = {enabled: false, member: null};
 				return state;
 			})
+			await this.state.onEdit(this.state.member)
 		} else {
 			this.setState({submitted: false});
 		}
@@ -118,6 +120,7 @@ class MemberCard extends Component {
 				<form className="App-memberCard" style={{"cursor": "pointer"}} onSubmit={this.handleSubmit}>
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(edit.member.color ? edit.member.color : "aaa")}} src={edit.member.avatar_url || "/default.png"} alt={edit.member.name + "'s avatar"}/>
 					<input placeholder="name" type="text" name="name" value={edit.member.name} onChange={(e)=>this.handleChange("name",e)}/>
+					<input placeholder="display name" type="text" name="display_name" value={edit.member.display_name} onChange={(e)=>this.handleChange("display_name",e)}/>
 					<input placeholder="avatar url" type="text" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
 					<input placeholder="color" pattern="[A-Fa-f0-9]{6}" type="text" name="color" value={edit.member.color} onChange={(e)=>this.handleChange("color",e)}/>
 					<p><input style={{width: '50px'}} type="text" placeholder="prefix" name="prefix" value={edit.member.prefix} onChange={(e)=>this.handleChange("prefix",e)}/>text<input placeholder="suffix" style={{width: '50px'}} type="text" name="suffix" value={edit.member.suffix} onChange={(e)=>this.handleChange("suffix",e)}/></p>
