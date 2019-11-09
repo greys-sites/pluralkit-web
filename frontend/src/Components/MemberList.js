@@ -35,7 +35,13 @@ class MemberList extends Component {
 		const n = name;
 		const val = e.target.value;
 		this.setState((state) => {
-			state.edit.member[n] = val != "" ? val : null;
+			if(["prefix","suffix"].includes(n)) {
+				if(!state.edit.member.proxy_tags) state.edit.member.proxy_tags = [{prefix: "", suffix: ""}];
+				state.edit.member.proxy_tags[0][n] = val != "" ? val : "";
+			} else {
+				state.edit.member[n] = val != "" ? val : null;
+			}
+			
 			return state;
 		})
 	}
@@ -43,6 +49,9 @@ class MemberList extends Component {
 	handleSubmit = async (e) => {
 		e.preventDefault();
 		var st = this.state.edit.member;
+
+		if((!st.proxy_tags) || (st.proxy_tags[0].prefix == "" && st.proxy_tags[0].suffix == "") ||
+			(st.proxy_tags[0].prefix == null && st.proxy_tags[0].suffix == null)) st.proxy_tags = [];
 
 		var res = await fetch('/pkapi/m', {
 			method: "POST",
@@ -113,7 +122,7 @@ class MemberList extends Component {
 					<input placeholder="display name" type="text" name="display_name" value={edit.member.display_name} onChange={(e)=>this.handleChange("display_name",e)}/>
 					<input placeholder="avatar url" type="text" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
 					<input placeholder="color" pattern="[A-Fa-f0-9]{6}" type="text" name="color" value={edit.member.color} onChange={(e)=>this.handleChange("color",e)}/>
-					<p><input style={{width: '50px'}} placeholder="prefix" type="text" name="prefix" value={edit.member.prefix} onChange={(e)=>this.handleChange("prefix",e)}/>text<input placeholder="suffix" style={{width: '50px'}} type="text" name="suffix" value={edit.member.suffix} onChange={(e)=>this.handleChange("suffix",e)}/></p>
+					<p><input style={{width: '50px'}} type="text" placeholder="prefix" name="prefix" value={edit.member.proxy_tags ? edit.member.proxy_tags[0].prefix : null} onChange={(e)=>this.handleChange("prefix",e)}/>text<input placeholder="suffix" style={{width: '50px'}} type="text" name="suffix" value={edit.member.proxy_tags ? edit.member.proxy_tags[0].suffix : null} onChange={(e)=>this.handleChange("suffix",e)}/></p>
 					<input placeholder="pronouns" type="text" name="pronouns" value={edit.member.pronouns} onChange={(e)=>this.handleChange("pronouns",e)}/>
 					<input placeholder="birthday (yyyy-mm-dd)" type="text" pattern="\d{4}-\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
 					<textarea placeholder="description" onChange={(e)=>this.handleChange("description",e)}>{edit.member.description}</textarea>

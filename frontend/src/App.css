@@ -18,6 +18,21 @@ body {
   align-items: center;
 }
 
+.App-note {
+  background-color: #335;
+  border-radius: 10px;
+  min-height: 100px;
+  width: 90%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+  margin: 20px 0;
+  font-size: calc(2vmin + 20px);
+}
+
 .App-spoiler {
   background-color: black;
   color: black;

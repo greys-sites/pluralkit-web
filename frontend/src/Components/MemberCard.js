@@ -49,6 +49,12 @@ class MemberCard extends Component {
 		}
 	}
 
+	formatTime = (date) => {
+		if(typeof date == "string") date = new Date(date);
+
+		return `${(date.getMonth()+1) < 10 ? "0"+(date.getMonth()+1) : (date.getMonth()+1)}.${(date.getDate()) < 10 ? "0"+(date.getDate()) : (date.getDate())}.${date.getFullYear()} at ${date.getHours() < 10 ? "0"+date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? "0"+date.getMinutes() : date.getMinutes()}`
+	}
+
 	enableEdit = (member)=> {
 		if(!this.state.editable) return;
 		this.setState((state)=> {
@@ -69,7 +75,13 @@ class MemberCard extends Component {
 		const n = name;
 		const val = e.target.value;
 		this.setState((state) => {
-			state.edit.member[n] = val != "" ? val : null;
+			if(["prefix","suffix"].includes(n)) {
+				if(!state.edit.member.proxy_tags[0]) state.edit.member.proxy_tags[0] = {prefix: null, suffix: null};
+				state.edit.member.proxy_tags[0][n] = val != "" ? val : null;
+			} else {
+				state.edit.member[n] = val != "" ? val : null;
+			}
+			
 			return state;
 		})
 	}
@@ -77,6 +89,19 @@ class MemberCard extends Component {
 	handleSubmit = async (e) => {
 		e.preventDefault();
 		var st = this.state.edit.member;
+
+		if(((st.proxy_tags[0].prefix == "" && st.proxy_tags[0].suffix == "") ||
+					(st.proxy_tags[0].prefix == null && st.proxy_tags[0].suffix == null)) &&
+			st.proxy_tags.length == 1) st.proxy_tags = [];
+
+		delete st.prefix;
+		delete st.suffix;
+
+		st.proxy_tags.forEach((tag,i) => {
+			if(tag.prefix == null && tag.sufix == null) st.proxy_tags.splice(i, 1);
+			if(tag.prefix == null) tag.prefix = "";
+			if(tag.suffix == null) tag.suffix = "";
+		})
 
 		var res = await fetch('/pkapi/m/'+st.id, {
 			method: "PATCH",
@@ -123,7 +148,11 @@ class MemberCard extends Component {
 					<input placeholder="display name" type="text" name="display_name" value={edit.member.display_name} onChange={(e)=>this.handleChange("display_name",e)}/>
 					<input placeholder="avatar url" type="text" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
 					<input placeholder="color" pattern="[A-Fa-f0-9]{6}" type="text" name="color" value={edit.member.color} onChange={(e)=>this.handleChange("color",e)}/>
-					<p><input style={{width: '50px'}} type="text" placeholder="prefix" name="prefix" value={edit.member.prefix} onChange={(e)=>this.handleChange("prefix",e)}/>text<input placeholder="suffix" style={{width: '50px'}} type="text" name="suffix" value={edit.member.suffix} onChange={(e)=>this.handleChange("suffix",e)}/></p>
+					<p>
+						<input style={{width: '50px'}} type="text" placeholder="prefix" name="prefix" value={edit.member.proxy_tags[0] ? edit.member.proxy_tags[0].prefix : null} onChange={(e)=>this.handleChange("prefix",e)}/>
+						text
+						<input placeholder="suffix" style={{width: '50px'}} type="text" name="suffix" value={edit.member.proxy_tags[0] ? edit.member.proxy_tags[0].suffix : null} onChange={(e)=>this.handleChange("suffix",e)}/>
+					</p>
 					<input placeholder="pronouns" type="text" name="pronouns" value={edit.member.pronouns} onChange={(e)=>this.handleChange("pronouns",e)}/>
 					<input placeholder="birthday (yyyy-mm-dd)" type="text" pattern="\d{4}-\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
 					<textarea placeholder="description" onChange={(e)=>this.handleChange("description",e)}>{edit.member.description}</textarea>
@@ -143,8 +172,9 @@ class MemberCard extends Component {
 					</h1>
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
 					{memb.display_name && <span className="App-tagline">aka {memb.name}</span>}
-					{(memb.prefix || memb.suffix) && <span className="App-tagline">{memb.prefix}text{memb.suffix}</span>}
+					{(memb.proxy_tags[0]) && <span className="App-tagline">{memb.proxy_tags[0].prefix}text{memb.proxy_tags[0].suffix}</span>}
 					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
+					<span className="App-tagline">Created: {this.formatTime(memb.created)}</span>
 					<div className="App-description" dangerouslySetInnerHTML={{__html: memb.tmpdescription || "<p>(no description)</p>"}}></div>
 				</div>
 				);
