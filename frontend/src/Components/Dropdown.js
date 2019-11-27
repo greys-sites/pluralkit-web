@@ -4,14 +4,16 @@ class Dropdown extends Component {
 	constructor(props) {
 		super(props);
 		var def = this.props.def ?
-				this.props.list.find(i => i.name == this.props.def) :
+				this.props.list[this.props.def] :
 				this.props.list[0];
 		this.state = {
 			visible: false,
 			list: this.props.list,
 			def: def,
 			selected: def,
-			callback: this.props.callback
+			index: this.props.def || 0,
+			callback: this.props.callback,
+			type: this.props.type || 0
 		};
 	}
 
@@ -33,11 +35,21 @@ class Dropdown extends Component {
 		this.setState({visible: !this.state.visible});
 	}
 
-	selectItem = (e) => {
+	selectItem = async (e) => {
 		e.preventDefault();
-		var item = e.target.innerHTML ? this.state.list.find(i => i.name == e.target.innerHTML) : this.state.def;
-		this.setState({selected: item, visible: false});
-		if(this.state.callback) this.state.callback(item);
+		if(this.state.type == 1) return;
+		var lastindex = this.state.index;
+		var target = e.target;
+		var index = [...target.parentNode.children].indexOf(target);
+		if(lastindex == index) return this.setState({visible: false});
+		var item = target.innerHTML ? this.state.list.find(i => i.name == target.innerHTML) : this.state.def;
+		if(this.state.callback) {
+			var data = await this.state.callback(item, index, lastindex);
+			this.setState(data ? {...data, visible: false} : {selected: item, visible: false, index: index});
+		} else {
+			this.setState({selected: item, visible: false, index: index});
+		}
+		
 	}
 
 	render() {
@@ -47,7 +59,8 @@ class Dropdown extends Component {
 				{this.state.visible && (
 					<ul onClick={(e)=> e.stopPropagation()}>
 					{this.state.list.map((v,i)=> {
-						return <li className="App-dropitem" key={i} onClick={this.selectItem}>{v.name}</li>
+						if(!(this.state.type == 1 && i == 0))
+							return <li className="App-dropitem" key={v+i} onClick={this.selectItem}>{v.name}</li>
 					})}
 					</ul>
 				)}

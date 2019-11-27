@@ -2,6 +2,8 @@ import React, { Component, Fragment as Frag } from 'react';
 import showdown from 'showdown';
 import sanitize from 'sanitize-html';
 
+import Dropdown from './Dropdown';
+
 showdown.setOption('simplifiedAutoLink', true);
 showdown.setOption('simpleLineBreaks', true);
 showdown.setOption('openLinksInNewWindow', true);
@@ -55,10 +57,76 @@ class MemberCard extends Component {
 		return `${(date.getMonth()+1) < 10 ? "0"+(date.getMonth()+1) : (date.getMonth()+1)}.${(date.getDate()) < 10 ? "0"+(date.getDate()) : (date.getDate())}.${date.getFullYear()} at ${date.getHours() < 10 ? "0"+date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? "0"+date.getMinutes() : date.getMinutes()}`
 	}
 
+	selectProxy = async (proxy, index, lastindex) => {
+		if(proxy.name) {
+			if(proxy.name == "Add new") {
+				await this.setState(state => {
+					if(!state.edit.proxylist[lastindex].val.prefix &&
+						!state.edit.proxylist[lastindex].val.suffix) {
+						state.edit.proxylist.splice(lastindex, 1);
+						index = index-1;
+					}
+					state.edit.proxy = {prefix: null, suffix: null};
+					state.edit.proxylist.push({name: "(empty)", val: state.edit.proxy});
+					state.edit.proxy_index = index;
+					return state;
+				})
+			} else {
+				await this.setState((state) => {
+					if(!state.edit.proxylist[lastindex].val.prefix &&
+						!state.edit.proxylist[lastindex].val.suffix &&
+						state.edit.proxylist.length > 1) {
+						state.edit.proxylist.splice(lastindex, 1);
+						if(index > lastindex) index = index-1;
+					}
+					state.edit.proxy = state.edit.proxylist[index].val;
+					state.edit.proxy_index = index;
+					return state;
+				});
+			}
+			return {
+				list: this.state.edit.proxylist.concat({name: "Add new"}),
+				selected: this.state.edit.proxylist[this.state.edit.proxy_index],
+				index: this.state.edit.proxy_index
+			}
+		}
+	}
+
+	editProxy = (e) => {
+		var name = e.name;
+		var val = e.value;
+		var key = this.state.edit.proxy_index;
+		console.log(key);
+		var proxy = this.state.edit.proxylist[key].val;
+		if(name == "prefix") {
+			this.setState((state) => {
+				state.edit.proxylist[key].name = (!val && !proxy.suffix ? "(empty)" : `${val || ""}text${proxy.suffix || ""}`);
+				state.edit.proxylist[key].val = {prefix: val, suffix: proxy.suffix || ""}
+				state.edit.proxy = state.edit.proxylist[key].val;
+				return state;
+			});
+		} else if(name == "suffix") {
+			this.setState((state) => {
+				state.edit.proxylist[key].name = (!proxy.prefix && !val ? "(empty)" : `${proxy.prefix || ""}text${val || ""}`);
+				state.edit.proxylist[key].val = {prefix: proxy.prefix || "", suffix: val || ""}
+				state.edit.proxy = state.edit.proxylist[key].val;
+				return state;
+			});
+		}	
+	}
+
 	enableEdit = (member)=> {
 		if(!this.state.editable) return;
 		this.setState((state)=> {
-			state.edit = {enabled: true, member: Object.assign({},member)};
+			var m = Object.assign({}, member);
+			var proxylist = m.proxy_tags && m.proxy_tags[0] ?
+				m.proxy_tags.map(p => {
+					return {
+						name: `${p.prefix}text${p.suffix}`,
+						val: p
+					}
+				}) : [{name: "(empty)", val: {prefix: null, suffix: null}}];
+			state.edit = {enabled: true, member: m, proxy: proxylist[0].val, proxylist: proxylist, proxy_index: 0};
 			return state;
 		})
 	}
@@ -72,12 +140,12 @@ class MemberCard extends Component {
 	}
 
 	handleChange = (name, e) => {
+		const target = e.target;
 		const n = name;
-		const val = e.target.value;
+		const val = target.value;
 		this.setState((state) => {
 			if(["prefix","suffix"].includes(n)) {
-				if(!state.edit.member.proxy_tags[0]) state.edit.member.proxy_tags[0] = {prefix: null, suffix: null};
-				state.edit.member.proxy_tags[0][n] = val != "" ? val : null;
+				this.editProxy(target);
 			} else {
 				state.edit.member[n] = val != "" ? val : null;
 			}
@@ -89,6 +157,7 @@ class MemberCard extends Component {
 	handleSubmit = async (e) => {
 		e.preventDefault();
 		var st = this.state.edit.member;
+		st.proxy_tags = this.state.edit.proxylist.map(p => p.val);
 
 		if(((st.proxy_tags[0].prefix == "" && st.proxy_tags[0].suffix == "") ||
 					(st.proxy_tags[0].prefix == null && st.proxy_tags[0].suffix == null)) &&
@@ -98,7 +167,7 @@ class MemberCard extends Component {
 		delete st.suffix;
 
 		st.proxy_tags.forEach((tag,i) => {
-			if(tag.prefix == null && tag.sufix == null) st.proxy_tags.splice(i, 1);
+			if(!tag.prefix && !tag.suffix) st.proxy_tags.splice(i, 1);
 			if(tag.prefix == null) tag.prefix = "";
 			if(tag.suffix == null) tag.suffix = "";
 		})
@@ -148,10 +217,11 @@ class MemberCard extends Component {
 					<input placeholder="display name" type="text" name="display_name" value={edit.member.display_name} onChange={(e)=>this.handleChange("display_name",e)}/>
 					<input placeholder="avatar url" type="text" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
 					<input placeholder="color" pattern="[A-Fa-f0-9]{6}" type="text" name="color" value={edit.member.color} onChange={(e)=>this.handleChange("color",e)}/>
-					<p>
-						<input style={{width: '50px'}} type="text" placeholder="prefix" name="prefix" value={edit.member.proxy_tags[0] ? edit.member.proxy_tags[0].prefix : null} onChange={(e)=>this.handleChange("prefix",e)}/>
+					<p style={{width: "90%"}}>
+						<Dropdown style={{width: "100%", margin: 0}} list = {edit.proxylist.concat({name: "Add new"})} callback = {this.selectProxy} />
+						<input style={{width: '25%'}} type="text" placeholder="prefix" name="prefix" value={edit.proxy.prefix || ""} onChange={(e)=>this.handleChange("prefix",e)}/>
 						text
-						<input placeholder="suffix" style={{width: '50px'}} type="text" name="suffix" value={edit.member.proxy_tags[0] ? edit.member.proxy_tags[0].suffix : null} onChange={(e)=>this.handleChange("suffix",e)}/>
+						<input style={{width: '25%'}} type="text" placeholder="suffix" name="suffix" value={edit.proxy.suffix || ""} onChange={(e)=>this.handleChange("suffix",e)}/>
 					</p>
 					<input placeholder="pronouns" type="text" name="pronouns" value={edit.member.pronouns} onChange={(e)=>this.handleChange("pronouns",e)}/>
 					<input placeholder="birthday (yyyy-mm-dd)" type="text" pattern="\d{4}-\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
@@ -172,7 +242,7 @@ class MemberCard extends Component {
 					</h1>
 					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
 					{memb.display_name && <span className="App-tagline">aka {memb.name}</span>}
-					{(memb.proxy_tags[0]) && <span className="App-tagline">{memb.proxy_tags[0].prefix}text{memb.proxy_tags[0].suffix}</span>}
+					{(memb.proxy_tags[0]) && < Dropdown style={{width: "90%"}} list={[{name: "Proxy list"}, ...memb.proxy_tags.map(p => {return {name: `${p.prefix || ""}text${p.suffix || ""}`}})]} type="1" />}
 					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
 					<span className="App-tagline">Created: {this.formatTime(memb.created)}</span>
 					<div className="App-description" dangerouslySetInnerHTML={{__html: memb.tmpdescription || "<p>(no description)</p>"}}></div>

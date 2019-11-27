@@ -33,10 +33,6 @@ class Dashboard extends Component {
 				<p style={{textAlign: 'center', fontStyle: 'italic'}}>(click to edit)</p>
 				</div>
 				<System sys={this.state.user} token={this.state.user.token} editable={true} />
-				<div className="App-note">
-					<p>NOTE: This site does not currently support multiple proxies!{" "}
-					Using this site may clear other proxies you have set. Sorry for the inconvenience :')</p>
-				</div>
 				<div style={{display: 'flex', alignItems: 'baseline'}}>
 				<h1 style={{textAlign: 'center'}}>Members</h1>
 				<p style={{textAlign: 'center', fontStyle: 'italic'}}>(click a member to edit)</p>
