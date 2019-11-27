@@ -23,8 +23,7 @@ class Dropdown extends Component {
 		window.removeEventListener('click', this.hide)
 	}
 
-	hide = (e) => {
-		e.preventDefault();
+	hide = () => {
 		if(this.state.visible) this.setState({visible: false})
 	}
 
