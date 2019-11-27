@@ -1,10 +1,62 @@
 import React, { Component, Fragment as Frag } from 'react';
 import MemberCard from './MemberCard';
+import Dropdown from './Dropdown';
 
 class MemberList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {members: this.props.members, editable: this.props.editable, token: this.props.token, edit: {enabled: false}, editClass: '', query: null};
+		this.state = {
+			members: this.props.members,
+			editable: this.props.editable,
+			token: this.props.token,
+			edit: {enabled: false},
+			editClass: '',
+			query: null,
+			sortmethods: [
+				{
+					name: "Alphabetical",
+					func: (members)=> {
+						return members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
+					}
+				},
+				{
+					name: "Reverse Alphabetical",
+					func: (members)=> {
+						return members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0)).reverse();
+					}
+				},
+				{
+					name: "Alphabetical by ID",
+					func: (members)=> {
+						return members.sort((a,b) => a.id > b.id ? 1 : -1);
+					}
+				},
+				{
+					name: "Reverse Alphabetical by ID",
+					func: (members)=> {
+						return members.sort((a,b) => a.id > b.id ? 1 : -1).reverse();
+					}
+				},
+				{
+					name: "Oldest to Newest",
+					func: (members)=> {
+						return members.sort((a,b) => new Date(a.created) > new Date(b.created) ? 1 : (new Date(a.created) < new Date(b.created) ? -1 : 0));
+					}
+				},
+				{
+					name: "Newest to Oldest",
+					func: (members)=> {
+						return members.sort((a,b) => new Date(a.created) > new Date(b.created) ? 1 : (new Date(a.created) < new Date(b.created) ? -1 : 0)).reverse();
+					}
+				}
+			],
+			sortmethod: {
+				name: "Alphabetical",
+				func: (members)=> {
+					return members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
+				}
+			}
+		};
 	}
 
 	enableEdit = ()=> {
@@ -29,6 +81,11 @@ class MemberList extends Component {
 		e.preventDefault();
 		var val = e.target.value ? e.target.value : null;
 		this.setState({query: val});
+	}
+
+	sortMembers = (method) => {
+		if(method.name) this.setState({members: method.func(this.state.members), sortmethod: method});
+		else this.setState({members: this.state.sortmethods[0].func(this.state.members), sortmethod: this.state.sortmethods[0]})
 	}
 
 	handleChange = (name, e) => {
@@ -68,7 +125,7 @@ class MemberList extends Component {
 			this.setState((state)=> {
 				state.submitted = true;
 				state.members.push(member);
-				state.members = state.members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
+				state.members = this.state.sortmethod.func(state.members);
 				state.edit = {enabled: false, member: null};
 				return state;
 			})
@@ -102,7 +159,7 @@ class MemberList extends Component {
 		this.setState(state => {
 			var ind = state.members.findIndex(mb => mb.id == member.id);
 			state.members[ind] = member;
-			state.members = state.members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
+			state.members = this.state.sortmethod.func(state.members);
 			return state;
 		})
 	}
@@ -112,7 +169,10 @@ class MemberList extends Component {
 		var query = this.state.query;
 		return (
 			<Frag>
-			<input style={{marginBottom: '20px', width: '200px'}} type="text" name="search" placeholder="search" value={query ? query : null} onChange={this.searchMembers} />
+			<div className="App-memberMethods">
+			<input className="App-searchbar" type="text" name="search" placeholder="search" value={query ? query : null} onChange={this.searchMembers} />
+			<Dropdown style={{width: '50%'}} list={this.state.sortmethods} callback={this.sortMembers}/>
+			</div>
 			<section className="App-memberList">
 				{this.props.editable && 
 				(edit.enabled ?
