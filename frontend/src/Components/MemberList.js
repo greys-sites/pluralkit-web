@@ -171,9 +171,20 @@ class MemberList extends Component {
 	handleSubmit = async (e) => {
 		e.preventDefault();
 		var st = this.state.edit.member;
+		st.proxy_tags = this.state.edit.proxylist.map(p => p.val);
 
-		if((!st.proxy_tags) || (st.proxy_tags[0].prefix == "" && st.proxy_tags[0].suffix == "") ||
-			(st.proxy_tags[0].prefix == null && st.proxy_tags[0].suffix == null)) st.proxy_tags = [];
+		if(((st.proxy_tags[0].prefix == "" && st.proxy_tags[0].suffix == "") ||
+					(st.proxy_tags[0].prefix == null && st.proxy_tags[0].suffix == null)) &&
+			st.proxy_tags.length == 1) st.proxy_tags = [];
+
+		delete st.prefix;
+		delete st.suffix;
+
+		st.proxy_tags.forEach((tag,i) => {
+			if(!tag.prefix && !tag.suffix) st.proxy_tags.splice(i, 1);
+			if(tag.prefix == null) tag.prefix = "";
+			if(tag.suffix == null) tag.suffix = "";
+		})
 
 		var res = await fetch('/pkapi/m', {
 			method: "POST",
