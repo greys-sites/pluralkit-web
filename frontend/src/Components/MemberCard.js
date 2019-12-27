@@ -165,6 +165,8 @@ class MemberCard extends Component {
 
 		delete st.prefix;
 		delete st.suffix;
+		delete st.tmpdescription;
+		delete st.created;
 
 		st.proxy_tags.forEach((tag,i) => {
 			if(!tag.prefix && !tag.suffix) st.proxy_tags.splice(i, 1);
