@@ -156,7 +156,7 @@ class MemberCard extends Component {
 
 	handleSubmit = async (e) => {
 		e.preventDefault();
-		var st = this.state.edit.member;
+		var st = Object.assign({}, this.state.edit.member);
 		st.proxy_tags = this.state.edit.proxylist.map(p => p.val);
 
 		if(((st.proxy_tags[0].prefix == "" && st.proxy_tags[0].suffix == "") ||
