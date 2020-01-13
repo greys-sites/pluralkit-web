@@ -9,27 +9,34 @@ app.use(require('cookie-parser')());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const sortfunc = function(a, b) {
+    a = a.display_name ? a.display_name : a.name;
+    b = b.display_name ? b.display_name : b.name;
+
+    return (
+        a > b ? 1 :
+        a < b ? -1 :
+        0
+    )
+}
 
 app.get('/api/user', async (req,res)=> {
     if(!req.cookies.token) return res.status(404).send(undefined);
     else {
-        var token = req.cookies.token;
-        var user = await fetch('https://api.pluralkit.me/s', {
-            headers: {
-                Authorization: token
-            }
-        })
+        var headers = {
+            Authorization: req.cookies.token
+        }
+        var user = await fetch('https://api.pluralkit.me/s', {headers})
         if(user.status != 200) {
             res.status(404).send(undefined)
         } else {
             user = await user.json();
-            user.token = token;
-            user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
-            try {
-                user.fronters = await (await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters")).json()
-            } catch(e) {
-                user.fronters = {}
-            }
+            user.token = req.cookies.token;
+            user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members", {headers})).json()).sort(sortfunc);
+            
+            var fronters = await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters", {headers});
+            if(fronters.status == 200) user.fronters = await fronters.json();
+            else user.fronters = {};
 
             res.status(200).send(user)
         }
@@ -42,42 +49,43 @@ app.get('/api/user/:id', async (req,res)=> {
         res.status(404).send(undefined)
     } else {
         user = await user.json();
-        user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
-        try {
-            user.fronters = await (await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters")).json()
-        } catch(e) {
-            user.fronters = {}
-        }
+
+        var members = await fetch('https://api.pluralkit.me/s/'+user.id+"/members");
+        if(members.status == 403) user.members = {private: true};
+        else user.members = (await members.json()).sort(sortfunc);
+
+        var fronters = await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters");
+        if(fronters.status == 200) user.fronters = await fronters.json();
+        else if(fronters.status == 403) user.fronters = {private: true};
+        else user.fronters = {};
 
         res.status(200).send(user)
     }
 })
 
 app.post('/api/login', async (req,res)=> {
-    var sys = await fetch('https://api.pluralkit.me/s', {
-        method: "GET",
-        headers: {
-            "Authorization": req.body.token
-        }
-    })
-    if(sys.status != 200) {
-        res.status(404).send(undefined);
+    var headers = {
+        Authorization: req.body.token
+    }
+    var user = await fetch('https://api.pluralkit.me/s', {headers})
+    if(user.status != 200) {
+        res.status(404).send(undefined)
     } else {
-        sys = await sys.json();
-        sys.token = req.body.token;
-        sys.members = (await (await fetch('https://api.pluralkit.me/s/'+sys.id+"/members")).json()).sort((a,b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
-        try {
-            sys.fronters = await (await fetch('https://api.pluralkit.me/s/'+sys.id+"/fronters")).json()
-        } catch(e) {
-            sys.fronters = {}
-        }
-        res.cookie('token',req.body.token)
-        res.status(200).send(sys)
+        user = await user.json();
+        user.token = req.body.token;
+        user.members = (await (await fetch('https://api.pluralkit.me/s/'+user.id+"/members", {headers})).json()).sort(sortfunc);
+        
+        var fronters = await fetch('https://api.pluralkit.me/s/'+user.id+"/fronters", {headers});
+        if(fronters.status == 200) user.fronters = await fronters.json();
+        else user.fronters = {};
+
+        res.cookie('token', req.body.token);
+        res.status(200).send(user)
     }
 })
 
 app.get('/api/logout', async (req,res)=> {
-    res.clearCookie('user');
+    res.clearCookie('token');
     res.status(200).send(null)
 })
 

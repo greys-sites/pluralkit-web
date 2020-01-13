@@ -28,10 +28,12 @@ var conv = new showdown.Converter();
 class System extends Component {
 	constructor(props) {
 		super(props);
-		this.props.sys.tmpdescription = sanitize(conv.makeHtml(this.props.sys.description),
+		if(this.props.sys.description) {
+			this.props.sys.tmpdescription = sanitize(conv.makeHtml(this.props.sys.description),
 			{
 				allowedTags: tags
 			});
+		} else this.props.sys.tmpdescription = "(no description)";
 		this.props.sys.tmpdescription = this.props.sys.tmpdescription.replace(/\|{2}(.*?)\|{2}/gs, "<span class='App-spoiler' onclick='event.stopPropagation()'>$1</span>");
 		this.state = {
 			sys: this.props.sys,
@@ -125,8 +127,8 @@ class System extends Component {
 					<div className="App-systeminfo" style={{"cursor": (this.state.editable ? "pointer" : "default")}} onClick={this.enableEdit}>
 					<p><strong>{sys.name || "(no name)"} ({sys.id})</strong></p>
 					<p className={sys.tag ? "" : "App-hidden"}><strong>Tag:</strong> {sys.tag}</p>
-					<p><strong>Member count:</strong> {membs ? membs.length : "No members found"}</p>
-					<p><strong>Current fronter{frnt && frnt.members && frnt.members.length > 1 ? 's' : ''}:</strong> {frnt && frnt.members ? frnt.members.map(m => m.name).join(", ") : "None"}</p>
+					<p><strong>Member count:</strong> {membs && membs[0] ? membs.length : (membs.private ? "(private)" : 0)}</p>
+					<p><strong>Current fronter{frnt && frnt.members && frnt.members.length == 1 ? 's' : ''}:</strong> {frnt && frnt.members && frnt.members.length > 0 ? frnt.members.map(m => m.name).join(", ") : (frnt.private ? "This user's fronters are private" : "(none)")}</p>
 					{sys.description && <div><p><strong>Description:</strong></p><p className="App-description" dangerouslySetInnerHTML={{__html: sys.tmpdescription}}></p></div>}
 					</div>
 					</div>

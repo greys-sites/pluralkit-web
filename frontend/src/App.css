@@ -3,15 +3,14 @@
 body {
   font-family: 'Sniglet', cursive;
   font-size: calc(5px + 2vmin);
-  height: 100vh;
+  min-height: 100vh;
   color: white;
   background-color: #20202B;
-
 }
 
 .App {
   text-align: left;
-  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -136,8 +135,9 @@ body {
   text-align: center;
   background-color: #383b53;
   border-radius: 5px;
-  height: 500px;
-  width: 250px;
+  height: 600px;
+  min-width: 250px;
+  max-width: 400px;
   line-height: unset;
   margin-top: 0;
   margin-bottom: 30px;

@@ -72,12 +72,12 @@ class App extends Component {
 						<div className="App-login">
 						<p>Enter your token below. You can get this with "pk;token"</p>
 						<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
-						<form onSubmit={this.logIn}>
+						<form style={{textAlign: "center"}} onSubmit={this.logIn}>
 							<input type="text"
-							floatinglabeltext="Token"
+							placeholder="token"
 			            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
 			            	/>
-			            <a className="App-button" onClick={this.logIn}>Submit</a>
+			            <button type="submit" className="App-button">Submit</button>
 						</form>
 						</div>
 					</Frag>

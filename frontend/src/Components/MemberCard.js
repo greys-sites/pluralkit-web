@@ -36,8 +36,7 @@ class MemberCard extends Component {
 			{
 				allowedTags: tags
 			});
-			this.props.member.tmpdescription = this.props.member.tmpdescription.replace(/\|{2}(.*?)\|{2}/gs, "<span class='App-spoiler' onclick='event.stopPropagation()'>$1</span>");
-			
+			this.props.member.tmpdescription = this.props.member.tmpdescription.replace(/\|{2}(.*?)\|{2}/gs, "<span class='App-spoiler' onclick='event.stopPropagation()'>$1</span>");	
 		}
 		this.state = {
 			key: 	this.props.key,

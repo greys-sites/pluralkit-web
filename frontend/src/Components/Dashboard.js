@@ -14,7 +14,6 @@ class Dashboard extends Component {
 	async componentDidMount() {
 		if(!this.state.user) {
 			this.setState({user: null, check: true});
-			return;
 		} else {
 			this.setState({check: true})
 		}

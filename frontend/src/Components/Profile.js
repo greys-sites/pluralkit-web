@@ -30,7 +30,8 @@ class Profile extends Component {
 				<h1 style={{textAlign: 'center'}}>System</h1>
 				<System sys={this.state.user} editable={false} />
 				<h1 style={{textAlign: 'center'}}>Members</h1>
-				<MemberList members={this.state.user.members} editable={false} token={null} />
+				{this.state.user.members.private ? <p>This user's member list is private.</p> :
+				<MemberList members={this.state.user.members} editable={false} token={null} />}
 				</Frag>
 			);
 		} else if(this.state.user == "404") {
