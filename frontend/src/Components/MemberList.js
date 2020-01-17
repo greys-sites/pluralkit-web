@@ -16,44 +16,64 @@ class MemberList extends Component {
 				{
 					name: "Alphabetical",
 					func: (members)=> {
-						return members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
+						return members.sort((a,b) => {
+							a = (a.display_name || a.name).toLowerCase();
+   							b = (b.display_name || b.name).toLowerCase();
+							return a > b ? 1 : a < b ? -1 : 0
+						});
 					}
 				},
 				{
 					name: "Reverse Alphabetical",
 					func: (members)=> {
-						return members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0)).reverse();
+						return members.sort((a,b) => {
+							a = (a.display_name || a.name).toLowerCase();
+   							b = (b.display_name || b.name).toLowerCase();
+							return a > b ? 1 : a < b ? -1 : 0
+						}).reverse();
 					}
 				},
 				{
 					name: "Alphabetical by ID",
 					func: (members)=> {
-						return members.sort((a,b) => a.id > b.id ? 1 : -1);
+						return members.sort((a,b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0);
 					}
 				},
 				{
 					name: "Reverse Alphabetical by ID",
 					func: (members)=> {
-						return members.sort((a,b) => a.id > b.id ? 1 : -1).reverse();
+						return members.sort((a,b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0).reverse();
 					}
 				},
 				{
 					name: "Oldest to Newest",
 					func: (members)=> {
-						return members.sort((a,b) => new Date(a.created) > new Date(b.created) ? 1 : (new Date(a.created) < new Date(b.created) ? -1 : 0));
+						return members.sort((a,b) => {
+							a = new Date(a.created);
+							b = new Date(b.created);
+							return a > b ? 1 : a < b ? -1 : 0;
+						});
 					}
 				},
 				{
 					name: "Newest to Oldest",
 					func: (members)=> {
-						return members.sort((a,b) => new Date(a.created) > new Date(b.created) ? 1 : (new Date(a.created) < new Date(b.created) ? -1 : 0)).reverse();
+						return members.sort((a,b) => {
+							a = new Date(a.created);
+							b = new Date(b.created);
+							return a > b ? 1 : a < b ? -1 : 0;
+						}).reverse();
 					}
 				}
 			],
 			sortmethod: {
 				name: "Alphabetical",
 				func: (members)=> {
-					return members.sort((a,b) => ((a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase()) > (b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase())) ? 1 : (((b.display_name ? b.display_name.toLowerCase() : b.name.toLowerCase()) > (a.display_name ? a.display_name.toLowerCase() : a.name.toLowerCase())) ? -1 : 0));
+					return members.sort((a,b) => {
+						a = (a.display_name || a.name).toLowerCase();
+   						b = (b.display_name || b.name).toLowerCase();
+						return a > b ? 1 : a < b ? -1 : 0
+					});
 				}
 			}
 		};

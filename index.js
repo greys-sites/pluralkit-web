@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const sortfunc = function(a, b) {
-    a = a.display_name ? a.display_name : a.name;
-    b = b.display_name ? b.display_name : b.name;
+    a = (a.display_name || a.name).toLowerCase();
+    b = (b.display_name || b.name).toLowerCase();
 
     return (
         a > b ? 1 :

@@ -308,6 +308,7 @@ code {
   width: 50%;
   margin: 0 10px;
   position: relative;
+  cursor: pointer;
 }
 
 .App-dropTitle {

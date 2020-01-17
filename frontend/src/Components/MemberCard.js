@@ -159,12 +159,13 @@ class MemberCard extends Component {
 		st.proxy_tags = this.state.edit.proxylist.map(p => p.val);
 
 		if(((st.proxy_tags[0].prefix == "" && st.proxy_tags[0].suffix == "") ||
-					(st.proxy_tags[0].prefix == null && st.proxy_tags[0].suffix == null)) &&
+			(st.proxy_tags[0].prefix == null && st.proxy_tags[0].suffix == null)) &&
 			st.proxy_tags.length == 1) st.proxy_tags = [];
 
 		delete st.prefix;
 		delete st.suffix;
 		delete st.tmpdescription;
+		var tmpc = st.created;
 		delete st.created;
 
 		st.proxy_tags.forEach((tag,i) => {
@@ -186,7 +187,8 @@ class MemberCard extends Component {
 		if(res.status == 200) {
 			await this.setState((state)=> {
 				state.submitted = true;
-				state.member = this.state.edit.member;
+				state.member = st;
+				state.member.created = tmpc;
 				if(state.member.description) {
 					state.member.tmpdescription = sanitize(conv.makeHtml(this.state.edit.member.description),
 					{
