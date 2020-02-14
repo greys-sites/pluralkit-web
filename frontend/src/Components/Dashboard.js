@@ -32,6 +32,14 @@ class Dashboard extends Component {
 				<p style={{textAlign: 'center', fontStyle: 'italic'}}>(click to edit)</p>
 				</div>
 				<System sys={this.state.user} token={this.state.user.token} editable={true} />
+				<div className="App-note">
+				<p>
+				<strong>Changes saved here may not be immediately reflected when using the bot on Discord.</strong>{" "}
+				This is due to the bot caching data. If your changes aren't showing up, <strong>try editing{" "}
+				a member (eg: [re]setting a displayname)</strong>. This will invalidate the cache and reflect{" "}
+				your changes
+				</p>
+				</div>
 				<div style={{display: 'flex', alignItems: 'baseline'}}>
 				<h1 style={{textAlign: 'center'}}>Members</h1>
 				<p style={{textAlign: 'center', fontStyle: 'italic'}}>(click a member to edit)</p>
