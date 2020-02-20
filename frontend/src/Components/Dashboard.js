@@ -28,10 +28,7 @@ class Dashboard extends Component {
 		} else if(this.state.check && this.state.user) {
 			return (
 				<Frag>
-				<div style={{display: 'flex', alignItems: 'baseline'}}>
 				<h1 style={{textAlign: 'center'}}>System</h1>
-				<p style={{textAlign: 'center', fontStyle: 'italic'}}>(click to edit)</p>
-				</div>
 				<System {...this.state.user} token={this.state.user.token} editable={true} />
 				<div className="App-note">
 				<p>
@@ -41,10 +38,7 @@ class Dashboard extends Component {
 				your changes
 				</p>
 				</div>
-				<div style={{display: 'flex', alignItems: 'baseline'}}>
 				<h1 style={{textAlign: 'center'}}>Members</h1>
-				<p style={{textAlign: 'center', fontStyle: 'italic'}}>(click a member to edit)</p>
-				</div>
 				<MemberList members={this.state.user.members} editable={true} token={this.state.user.token} />
 				</Frag>
 			);
