@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Sniglet');
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Sniglet', cursive;
   font-size: calc(5px + 2vmin);
@@ -29,7 +33,35 @@ body {
   justify-content: center;
   padding: 10px 0;
   margin: 20px 0;
-  font-size: calc(2vmin + 20px);
+  font-size: calc(1vmin + 20px);
+}
+
+.App-error {
+  background-color: #bbbbbd;
+  color: #560000;
+}
+
+.App-progressWrapper {
+  background-color: #bbbbbd;
+  color: black;
+}
+
+.App-progressBar {
+  background-color: #5a5;
+  height: 10px;
+}
+
+.App-scrollButtons {
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  opacity: .5;
+}
+
+.App-scrollButtons:hover {
+  opacity: 1;
 }
 
 .App-spoiler {
@@ -92,60 +124,130 @@ body {
   text-decoration: underline;
 }
 
-.App-systeminfo {
-  float: left;
-  border-radius: 5px;
-  background-color: #383b53;
-  color: white;
-  width: 90%;
-}
-
 .App-syscontainer {
   margin: 5px 0;
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.App-sysWrapper {
+  width: 90%;
+  height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  transition: all .5s cubic-bezier(1,-0.5,0,1.5);
+}
+
+.App-syscontainer.expand .App-sysWrapper {
+  height: 600px;
+}
+
+.App-sysWrapper > div {
+  border-radius: 5px;
+  background-color: #383b53;
+  color: white;
+  height: 300px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.App-syscontainer.editEnabled .App-sysWrapper {
+  background-color: #383b53;
+}
+
+.App-syscontainer.editEnabled .App-sysWrapper > div {
   align-items: center;
 }
 
+.App-syscontainer form {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
 .App-memberList {
-  background-color: rgba(0,0,0,0);
+  background-color: transparent;
   overflow-y: hidden;
   overflow-x: hidden;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 90%;
-}
-
-.App-memberList>* {
-  flex: 1 1 250px;
-  max-width: 85%;
 }
 
 .App-memberCard {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  flex: 0 1 400px;
+  height: 600px;
   text-align: center;
   background-color: #383b53;
   border-radius: 5px;
-  height: 600px;
-  min-width: 250px;
-  max-width: 400px;
   line-height: unset;
-  margin-top: 0;
-  margin-bottom: 30px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 0 10px 30px 10px;
+  transition: all .5s cubic-bezier(1,-0.5,0,1.5);
+  overflow: hidden;
 }
 
-input:not(.App-searchbar) {
+.App-memberCard.expand {
+  cursor: pointer;
+  height: 1100px;
+}
+
+.App-memberWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  width: 100%;
+  overflow: hidden;
+  transition: all .5s cubic-bezier(1,-.5,0,1.5);
+}
+
+.App-memberCard.expand .App-memberWrapper {
+  height: 1000px;
+}
+
+.App-memberWrapper > div {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.App-memberCard #button-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.App-memberCard form {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+input[type="text"]:not(.App-searchbar) {
   width: 90%;
 }
 
@@ -166,12 +268,9 @@ input, textarea {
     box-shadow: 0 0 0 2px #414361
 }
 
-.App-searchbar {
-  margin: 0 5px 10px 5px;
-}
-
 .App-memberCard h1 {
   color: #ccc;
+  margin: 5px;
 }
 
 .App-tagline {
@@ -228,8 +327,8 @@ input, textarea {
   font-family: Sniglet;
   margin: 5px 5px;
   cursor: pointer;
-  height: 5vmin;
-  line-height: 5vmin;
+  height: 7vmin;
+  line-height: 7vmin;
   width: auto;
 }
 
@@ -313,7 +412,9 @@ code {
 
 .App-dropTitle {
   background-color: #334;
-  padding: 10px;
+  padding: 1vmin;
+  height: 5vmin;
+  line-height: 5vmin;
 }
 
 .App-dropdown ul {
@@ -323,7 +424,7 @@ code {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 18vh;
+  height: 100%;
   overflow-y: auto;
 }
 
@@ -340,6 +441,7 @@ code {
   flex-direction: row;
   width: 80%;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
