@@ -1,12 +1,13 @@
 import React, { Component, Fragment as Frag } from 'react';
 import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
-import * as fetch from 'node-fetch';
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons'
 import './App.css';
 
 import System from './Components/System';
 import Profile from './Components/Profile';
 import Dashboard from './Components/Dashboard';
-import Footer from './Components/Footer';
 import Login from './Components/Login';
 import Loading from './Components/Loading';
 
@@ -19,76 +20,102 @@ class App extends Component {
 	}
 
 	async componentDidMount() {
-		var user = await fetch('/api/user');
-		if(user.status != 200) user = undefined
-		else user = await user.json();
+		var user;
+		try {
+			user = await axios('/api/user');
+		} catch(e) {
+			user = e.message;
+		}
 
-		this.setState({user: user, check: true})
+		if(user.data) this.setState({user: user.data, check: true});
+		else this.setState({check: true, err: user});
 	}
 
 	logOut = async () => {
-		await fetch('/api/logout');
-		this.setState({user: undefined, check: true})
+		var err;
+		try {
+			await axios('/api/logout');
+		} catch(e) {
+			err = e.message;
+		}
+		
+		this.setState({user: undefined, check: true, err})
 	}
 
 	logIn = async (e) => {
 		e.preventDefault();
 		var st = this.state;
 
-		var res = await fetch('/api/login', {
-			method: "POST",
-			body: JSON.stringify(st),
-			headers: {
-				"Content-Type": "application/json"
-			}
-		});
-
-		if(res.status == 200) {
-			this.setState({submitted: true, user: await res.json()})
-		} else {
-			this.setState({submitted: true})
+		try {
+			var res = await axios('/api/login', {
+				method: "POST",
+				data: JSON.stringify(st),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			});
+		} catch(e) {
+			console.log(e);
+			res = e.message;
 		}
+		
+
+		if(res.data) this.setState({submitted: true, user: res.data});
+		else this.setState({submitted: true, user: null, error: res});
+	}
+
+	scrollToTop = () => {
+		window.scrollTo(0,0);
+	}
+
+	scrollToBottom = () => {
+		this.footerRef.scrollIntoView();
 	}
 
 	render() {
 		if(!this.state.check) return <Loading />;
 		return (
 			<div className="App">
-			<Router>
-			<header className="App-header">
-			<a className="App-link" href="/">
-			PluralKit Web
-			</a>
-			<div className="App-buttons">
-			{this.state.user &&
-				<button className="App-button" onClick={()=>this.logOut()}>Logout</button>
-			}
+			<div className="App-scrollButtons">
+			<button type="button" className="App-button" onClick={this.scrollToTop}><FontAwesomeIcon icon={faArrowUp} /></button>
+			<button type="button" className="App-button" onClick={this.scrollToBottom}><FontAwesomeIcon icon={faArrowDown} /></button>
 			</div>
-			</header>
-			{this.state.user ?
-				<Route exact path="/" render={(props)=> <Dashboard {...props} user={this.state.user} />} /> :
-				<Route exact path="/" render={(props)=> 
-					<Frag>
-						<div className="App-login">
-						<p>Enter your token below. You can get this with "pk;token"</p>
-						<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
-						<form style={{textAlign: "center"}} onSubmit={this.logIn}>
-							<input type="text"
-							placeholder="token"
-			            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
-			            	/>
-			            <button type="submit" className="App-button">Submit</button>
-						</form>
-						</div>
-					</Frag>
+			<Router>
+				<header className="App-header">
+				<a className="App-link" href="/">
+				PluralKit Web
+				</a>
+				<div className="App-buttons">
+				{this.state.user &&
+					<button className="App-button" onClick={()=>this.logOut()}>Logout</button>
 				}
-				/>
-			}
-			
-			<Route path="/profile/:id" component={Profile} />
-
+				</div>
+				</header>
+				{this.state.user ?
+					<Route exact path="/" render={(props)=> <Dashboard {...props} user={this.state.user} />} /> :
+					<Route exact path="/" render={(props)=> 
+						<Frag>
+							<div className="App-login">
+							<p>Enter your token below. You can get this with "pk;token"</p>
+							<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
+							<form style={{textAlign: "center"}} onSubmit={this.logIn}>
+								<input type="text"
+								placeholder="token"
+				            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
+				            	/>
+				            <button type="submit" className="App-button">Submit</button>
+							</form>
+							</div>
+						</Frag>
+					}
+					/>
+				}
+				
+				<Route path="/profile/:id" component={Profile} />
 			</Router>
-			<Footer />
+			<footer className="App-footer" ref={(el) => this.footerRef = el}>
+				<a className="App-link" href="https://github.com/xSke/PluralKit">PluralKit by @xSke</a> | <a className="App-link" href="https://github.com/greysdawn/pluralkit-web">Site by @greysdawn</a>
+			</footer>
 			</div>
 			);
 	}

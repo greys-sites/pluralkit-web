@@ -8,7 +8,8 @@ class Dashboard extends Component {
 	constructor(props) {
 		super(props);
 		
-		this.state = {user: this.props.user, check: false};
+		this.state = {
+			user: this.props.user, check: false};
 	}
 
 	async componentDidMount() {
@@ -31,7 +32,7 @@ class Dashboard extends Component {
 				<h1 style={{textAlign: 'center'}}>System</h1>
 				<p style={{textAlign: 'center', fontStyle: 'italic'}}>(click to edit)</p>
 				</div>
-				<System sys={this.state.user} token={this.state.user.token} editable={true} />
+				<System {...this.state.user} token={this.state.user.token} editable={true} />
 				<div className="App-note">
 				<p>
 				<strong>Changes saved here may not be immediately reflected when using the bot on Discord.</strong>{" "}

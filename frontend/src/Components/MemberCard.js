@@ -1,6 +1,7 @@
 import React, { Component, Fragment as Frag } from 'react';
 import showdown from 'showdown';
 import sanitize from 'sanitize-html';
+import axios 	from 'axios';
 
 import Dropdown from './Dropdown';
 
@@ -38,6 +39,9 @@ class MemberCard extends Component {
 			});
 			this.props.member.tmpdescription = this.props.member.tmpdescription.replace(/\|{2}(.*?)\|{2}/gs, "<span class='App-spoiler' onclick='event.stopPropagation()'>$1</span>");	
 		}
+
+		this.cardRef = React.createRef();
+
 		this.state = {
 			key: 	this.props.key,
 			member: this.props.member,
@@ -45,9 +49,16 @@ class MemberCard extends Component {
 			editable: this.props.editable,
 			token: this.props.token,
 			submitted: false,
+			error: null,
 			deleteMember: this.props.deleteMember,
-			onEdit: this.props.onEdit
+			onEdit: this.props.onEdit,
+			expanded: false,
+			delete: 0
 		}
+	}
+
+	componentDidMount() {
+		if(this.props.isNew) window.scrollTo(0, this.cardRef.current.offsetTop)
 	}
 
 	formatTime = (date) => {
@@ -114,14 +125,15 @@ class MemberCard extends Component {
 		}	
 	}
 
-	enableEdit = (member)=> {
+	enableEdit = ()=> {
 		if(!this.state.editable) return;
+		if(this.state.edit.enabled) return;
 		this.setState((state)=> {
-			var m = Object.assign({}, member);
+			var m = Object.assign({}, state.member);
 			var proxylist = m.proxy_tags && m.proxy_tags[0] ?
 				m.proxy_tags.map(p => {
 					return {
-						name: `${p.prefix}text${p.suffix}`,
+						name: `${p.prefix || ""}text${p.suffix || ""}`,
 						val: p
 					}
 				}) : [{name: "(empty)", val: {prefix: null, suffix: null}}];
@@ -134,6 +146,8 @@ class MemberCard extends Component {
 		this.setState((state)=> {
 			state.edit = {enabled: false, member: null};
 			state.member = this.state.member;
+			state.expanded = false;
+			state.delete = 0;
 			return state;
 		})
 	}
@@ -141,10 +155,12 @@ class MemberCard extends Component {
 	handleChange = (name, e) => {
 		const target = e.target;
 		const n = name;
-		const val = target.value;
+		const val = target.checked || target.value;
 		this.setState((state) => {
 			if(["prefix","suffix"].includes(n)) {
 				this.editProxy(target);
+			} else if(n == "privacy") {
+				state.edit.member[n] = val == true ? "private" : "public";
 			} else {
 				state.edit.member[n] = val != "" ? val : null;
 			}
@@ -165,30 +181,41 @@ class MemberCard extends Component {
 		delete st.prefix;
 		delete st.suffix;
 		delete st.tmpdescription;
-		var tmpc = st.created;
 		delete st.created;
+
+		//nullify empty strings, just in case
+		Object.keys(st).forEach(k => {
+			if(st[k] === "") st[k] = null;
+		})
 
 		st.proxy_tags.forEach((tag,i) => {
 			if(!tag.prefix && !tag.suffix) st.proxy_tags.splice(i, 1);
 			if(tag.prefix == null) tag.prefix = "";
 			if(tag.suffix == null) tag.suffix = "";
-		})
-
-		var res = await fetch('/pkapi/m/'+st.id, {
-			method: "PATCH",
-			body: JSON.stringify(st),
-			headers: {
-				"Content-Type": "application/json",
-				"Authorization": this.state.token
-
-			}
 		});
 
-		if(res.status == 200) {
+		if(st.id != "new") {
+			try {
+				var res = await axios('/pkapi/m/'+st.id, {
+					method: "PATCH",
+					data: JSON.stringify(st),
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": this.state.token
+
+					}
+				});
+			} catch(e) {
+				console.log(e.response);
+				this.setState({submitted: true, error: e.response.data});
+				setTimeout(()=> this.setState({error: null}), 5000);
+				return;
+			}
+
+			var newmember = res.data;
 			await this.setState((state)=> {
 				state.submitted = true;
-				state.member = st;
-				state.member.created = tmpc;
+				state.member = newmember;
 				if(state.member.description) {
 					state.member.tmpdescription = sanitize(conv.makeHtml(this.state.edit.member.description),
 					{
@@ -200,58 +227,142 @@ class MemberCard extends Component {
 					state.member.tmpdescription = null;
 				}
 				state.edit = {enabled: false, member: null};
+				state.expanded = false;
 				return state;
 			})
 			await this.state.onEdit(this.state.member)
 		} else {
-			this.setState({submitted: false});
+			try {
+				var res = await axios('/pkapi/m', {
+					method: "POST",
+					data: JSON.stringify(st),
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": this.state.token
+
+					}
+				});
+			} catch(e) {
+				console.log(e);
+				this.setState({submitted: true, error: e.response.data});
+				setTimeout(()=> this.setState({error: null}), 5000);
+				return;
+			}
+			
+			var member = res.data;
+			this.setState({
+				member: {id: "new"},
+				edit: {enabled: false, member: null},
+				expanded: false,
+				delete: 0
+			})
+			this.props.onCreate(member);
 		}
+	}
+
+	deleteMember = () => {
+		if(this.state.delete == 0) {
+			this.setState({delete: 1})
+		} else this.state.deleteMember(this.state.member.id);
+	}
+
+	cancelDelete = () => {
+		this.setState({delete: 0})
+	}
+
+	expand = () => {
+		if(this.state.expanded) window.scrollTo(0, this.cardRef.current.offsetTop);
+		else window.scrollTo(0, this.cardRef.current.offsetTop + 500);
+		this.setState({expanded: !this.state.expanded})
 	}
 
 	render() {
 		var memb = this.state.member;
 		var edit = this.state.edit;
-		if(memb) {
-			if(edit.enabled) {
-				return (
-				<form className="App-memberCard" style={{"cursor": "pointer"}} onSubmit={this.handleSubmit}>
-					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(edit.member.color ? edit.member.color : "aaa")}} src={edit.member.avatar_url || "/default.png"} alt={edit.member.name + "'s avatar"}/>
-					<input placeholder="name" type="text" name="name" value={edit.member.name} onChange={(e)=>this.handleChange("name",e)}/>
-					<input placeholder="display name" type="text" name="display_name" value={edit.member.display_name} onChange={(e)=>this.handleChange("display_name",e)}/>
-					<input placeholder="avatar url" type="text" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
-					<input placeholder="color" pattern="[A-Fa-f0-9]{6}" type="text" name="color" value={edit.member.color} onChange={(e)=>this.handleChange("color",e)}/>
-					<p style={{width: "90%"}}>
-						<Dropdown style={{width: "100%", margin: 0}} list = {edit.proxylist.concat({name: "Add new"})} callback = {this.selectProxy} />
-						<input style={{width: '25%'}} type="text" placeholder="prefix" name="prefix" value={edit.proxy.prefix || ""} onChange={(e)=>this.handleChange("prefix",e)}/>
-						text
-						<input style={{width: '25%'}} type="text" placeholder="suffix" name="suffix" value={edit.proxy.suffix || ""} onChange={(e)=>this.handleChange("suffix",e)}/>
-					</p>
-					<input placeholder="pronouns" type="text" name="pronouns" value={edit.member.pronouns} onChange={(e)=>this.handleChange("pronouns",e)}/>
-					<input placeholder="birthday (yyyy-mm-dd)" type="text" pattern="\d{4}-\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
-					<textarea placeholder="description" onChange={(e)=>this.handleChange("description",e)}>{edit.member.description}</textarea>
-				
-					<div>
-					<button className="App-button" type="submit">Save</button>{" "}
-					<button className="App-button" type="button" onClick={this.cancelEdit}>Cancel</button>
-					<button className="App-button" type="button" onClick={()=>this.state.deleteMember(memb.id)}>Delete</button>
-					</div>
-				</form>
-				)
-			} else {
-				return (
-				<div className="App-memberCard" style={{"cursor": (this.state.editable ? "pointer" : "default")}} onClick={()=> this.enableEdit(memb)}>
-					<h1>
-						{memb.display_name ? memb.display_name.toUpperCase() : memb.name.toUpperCase()} ({memb.id})
+		if(memb && memb.id == "new" && !edit.enabled) {
+			return (
+				<div className={`App-memberCard ${this.state.editClass}`} style={{"cursor": (this.state.editable ? "pointer" : "default")}} onClick={()=> this.enableEdit()}>
+					<h1 style={{fontSize: 'calc(72px + 2vmin)', opacity: .5, margin: 'auto'}}>
+						+
 					</h1>
-					<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
-					{memb.display_name && <span className="App-tagline">aka {memb.name}</span>}
-					{(memb.proxy_tags[0]) && < Dropdown style={{width: "90%"}} list={[{name: "Proxy list"}, ...memb.proxy_tags.map(p => {return {name: `${p.prefix || ""}text${p.suffix || ""}`}})]} type="1" />}
-					<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
-					<span className="App-tagline">Created: {this.formatTime(memb.created)}</span>
-					<div className="App-description" dangerouslySetInnerHTML={{__html: memb.tmpdescription || "<p>(no description)</p>"}}></div>
 				</div>
-				);
-			}
+			);
+		} else if(memb) {
+			return (
+				<div className={`App-memberCard ${edit.enabled ? "editEnabled" : ""} ${this.state.expanded ? "expand" : ""}`} ref={this.cardRef}>
+				{
+					edit.enabled ? 
+					(
+						<form onSubmit={this.handleSubmit}>
+							<div className="App-memberWrapper">
+							<div id="properties-panel">
+								<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(edit.member.color ? edit.member.color : "aaa")}} src={edit.member.avatar_url || "/default.png"} alt={edit.member.name + "'s avatar"}/>
+								<input placeholder="name" type="text" name="name" value={edit.member.name} onChange={(e)=>this.handleChange("name",e)}/>
+								<input placeholder="display name" type="text" name="display_name" value={edit.member.display_name} onChange={(e)=>this.handleChange("display_name",e)}/>
+								<input placeholder="avatar url" type="text" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
+								<input placeholder="color" pattern="[A-Fa-f0-9]{6}" type="text" name="color" value={edit.member.color} onChange={(e)=>this.handleChange("color",e)}/>
+								<p style={{width: "90%"}}>
+									<Dropdown style={{width: "100%", margin: 0}} list = {edit.proxylist.concat({name: "Add new"})} callback = {this.selectProxy} />
+									<input style={{width: '25%'}} type="text" placeholder="prefix" name="prefix" value={edit.proxy.prefix || ""} onChange={(e)=>this.handleChange("prefix",e)}/>
+									text
+									<input style={{width: '25%'}} type="text" placeholder="suffix" name="suffix" value={edit.proxy.suffix || ""} onChange={(e)=>this.handleChange("suffix",e)}/>
+								</p>
+								<input placeholder="pronouns" type="text" name="pronouns" value={edit.member.pronouns} onChange={(e)=>this.handleChange("pronouns",e)}/>
+								<input placeholder="birthday (yyyy-mm-dd)" type="text" pattern="\d{4}-\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
+								<textarea placeholder="description" onChange={(e)=>this.handleChange("description",e)}>{edit.member.description}</textarea>
+							</div>
+							<div id="privacy-panel">
+								<p>
+								<label for="privacy">Make member private?</label>{" "}
+								<input type="checkbox" name="privacy" checked={edit.member.privacy == "private" ? true : false} onChange={(e)=>this.handleChange("privacy",e)}/>
+								</p>
+								<p>(Note: more privacy features will be added here as they're added to the API itself)</p>
+							</div>
+							</div>
+							{this.state.delete == 1 && <p className="App-error">Are you sure you want to delete this member?</p>}
+							{this.state.error && <p className="App-error">ERR: {this.state.error}</p>}
+							{this.state.delete == 0 ? (
+								<div id="button-panel">
+									<button className="App-button" type="submit">Save</button>
+									<button className="App-button" type="button" onClick={this.cancelEdit}>Cancel</button>
+									{memb.id != "new" && <button className="App-button" type="button" onClick={()=>this.deleteMember()}>Delete</button>}
+									<button className="App-button" type="button" onClick={this.expand}>{this.state.expanded ? "Contract" : "Expand"}</button>
+								</div>
+							) : (
+								<div id="button-panel">
+									<button className="App-button" type="button" onClick={()=>this.deleteMember()}>I'm sure!</button>
+									<button className="App-button" type="button" onClick={this.cancelDelete}>Wait no</button>
+								</div>
+							)}
+							
+						</form>
+					) :
+					(
+						<Frag>
+						<div className="App-memberWrapper">
+							<div id="properties-panel">
+							<h1>
+								{memb.display_name ? memb.display_name.toUpperCase() : memb.name.toUpperCase()} ({memb.id})
+							</h1>
+							<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(memb.color ? memb.color : "aaa")}} src={memb.avatar_url || "/default.png"} alt={memb.name + "'s avatar"}/>
+							{memb.display_name && <span className="App-tagline">aka {memb.name}</span>}
+							{(memb.proxy_tags[0]) && < Dropdown style={{width: "90%"}} list={[{name: "Proxy list"}, ...memb.proxy_tags.map(p => {return {name: `${p.prefix || ""}text${p.suffix || ""}`}})]} type="1" />}
+							<span className="App-tagline">{memb.pronouns || "(N/A)"} || {memb.birthday || "(N/A)"}</span>
+							<span className="App-tagline">Created: {this.formatTime(memb.created)}</span>
+							<div className="App-description" dangerouslySetInnerHTML={{__html: memb.tmpdescription || "<p>(no description)</p>"}}></div>
+							</div>
+						</div>
+						{this.state.editable && (
+							<div id="button-panel">
+							<button className="App-button" type="button" onClick={this.enableEdit}>Edit</button>
+							</div>
+						)}
+						</Frag>
+					)
+				}
+				{this.state.err && <p className="App-error">ERR: {this.state.err}</p>}
+				</div>
+			)
 		} else {
 			return null;
 		}
