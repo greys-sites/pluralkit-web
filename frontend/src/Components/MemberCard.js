@@ -183,6 +183,8 @@ class MemberCard extends Component {
 		delete st.tmpdescription;
 		delete st.created;
 
+		if(st.birthday && st.birthday.match(new RegExp(/^\d{2}-\d{2}$/))) st.birthday = "0004-" + st.birthday;
+    
 		//nullify empty strings, just in case
 		Object.keys(st).forEach(k => {
 			if(st[k] === "") st[k] = null;
@@ -308,7 +310,7 @@ class MemberCard extends Component {
 									<input style={{width: '25%'}} type="text" placeholder="suffix" name="suffix" value={edit.proxy.suffix || ""} onChange={(e)=>this.handleChange("suffix",e)}/>
 								</p>
 								<input placeholder="pronouns" type="text" name="pronouns" value={edit.member.pronouns} onChange={(e)=>this.handleChange("pronouns",e)}/>
-								<input placeholder="birthday (yyyy-mm-dd)" type="text" pattern="\d{4}-\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
+								<input placeholder="birthday ([yyyy-]mm-dd)" type="text" pattern="(?:\d{4}-)?\d{2}-\d{2}" name="birthday" value={edit.member.birthday} onChange={(e)=>this.handleChange("birthday",e)}/>
 								<textarea placeholder="description" onChange={(e)=>this.handleChange("description",e)}>{edit.member.description}</textarea>
 							</div>
 							<div id="privacy-panel">

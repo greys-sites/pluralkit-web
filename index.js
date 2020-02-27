@@ -64,7 +64,7 @@ app.get('/api/user/:id', async (req,res)=> {
         else user.members = members.data.sort(sortfunc);
 
         var fronters = await axinst('https://api.pluralkit.me/s/'+user.system.id+"/fronters");
-        if(fronters.status == 200) user.fronters = await fronters.json();
+        if(fronters.status == 200) user.fronters = fronters.data;
         else if(fronters.status == 403) user.fronters = {private: true};
         else user.fronters = {};
 
