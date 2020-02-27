@@ -184,7 +184,7 @@ class MemberCard extends Component {
 		delete st.created;
 
 		if(st.birthday && st.birthday.match(new RegExp(/^\d{2}-\d{2}$/))) st.birthday = "0004-" + st.birthday;
-
+    
 		//nullify empty strings, just in case
 		Object.keys(st).forEach(k => {
 			if(st[k] === "") st[k] = null;
