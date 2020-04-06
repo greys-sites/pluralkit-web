@@ -323,13 +323,13 @@ input, textarea {
   padding: 0 10px;
   text-align: center;
   text-decoration: none;
-  font-size: 2.5vmin;
+  font-size: calc(5px + 2vmin);
   font-family: Sniglet;
-  margin: 5px 5px;
+  margin: 5px;
   cursor: pointer;
   height: 7vmin;
-  line-height: 7vmin;
-  width: auto;
+  max-height: 50px;
+  line-height: 100%;
 }
 
 .App-footer {
@@ -468,5 +468,30 @@ code {
   }
   100% {
     transform: scale(1,1);
+  }
+}
+
+@media(min-width: 2000px) {
+  body {
+    zoom: 1.25;
+  }
+
+  .App-memberCard {
+    flex: 0 1 550px;
+    height: 800px;
+  }
+
+  .App-memberWrapper, .App-memberWrapper>div {
+    height: 700px;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+
+  .App-dropTitle {
+    height: 3vmin;
+    line-height: 100%;
   }
 }
