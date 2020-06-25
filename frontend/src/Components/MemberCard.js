@@ -159,7 +159,7 @@ class MemberCard extends Component {
 		this.setState((state) => {
 			if(["prefix","suffix"].includes(n)) {
 				this.editProxy(target);
-			} else if(n == "privacy") {
+			} else if(n == "visibility" || n.includes('privacy')) {
 				state.edit.member[n] = val == true ? "private" : "public";
 			} else {
 				state.edit.member[n] = val != "" ? val : null;
@@ -182,6 +182,7 @@ class MemberCard extends Component {
 		delete st.suffix;
 		delete st.tmpdescription;
 		delete st.created;
+		delete st.privacy;
 
 		if(st.birthday && st.birthday.match(new RegExp(/^\d{2}-\d{2}$/))) st.birthday = "0004-" + st.birthday;
     
@@ -315,10 +316,39 @@ class MemberCard extends Component {
 							</div>
 							<div id="privacy-panel">
 								<p>
-								<label for="privacy">Make member private?</label>{" "}
-								<input type="checkbox" name="privacy" checked={edit.member.privacy == "private" ? true : false} onChange={(e)=>this.handleChange("privacy",e)}/>
+								<label for="visibility">Make member private?</label>{" "}
+								<input type="checkbox" name="visibility" checked={edit.member.visibility == "private" ? true : false} onChange={(e)=>this.handleChange("visibility",e)}/>
 								</p>
-								<p>(Note: more privacy features will be added here as they're added to the API itself)</p>
+
+								<p>
+								<label for="name_privacy">Make member name private?</label>{" "}
+								<input type="checkbox" name="name_privacy" checked={edit.member.name_privacy == "private" ? true : false} onChange={(e)=>this.handleChange("name_privacy",e)}/>
+								</p>
+
+								<p>
+								<label for="description_privacy">Make member description private?</label>{" "}
+								<input type="checkbox" name="description_privacy" checked={edit.member.description_privacy == "private" ? true : false} onChange={(e)=>this.handleChange("description_privacy",e)}/>
+								</p>
+
+								<p>
+								<label for="birthday_privacy">Make member birthday private?</label>{" "}
+								<input type="checkbox" name="birthday_privacy" checked={edit.member.birthday_privacy == "private" ? true : false} onChange={(e)=>this.handleChange("birthday_privacy",e)}/>
+								</p>
+
+								<p>
+								<label for="pronoun_privacy">Make member pronouns private?</label>{" "}
+								<input type="checkbox" name="pronoun_privacy" checked={edit.member.pronoun_privacy == "private" ? true : false} onChange={(e)=>this.handleChange("pronoun_privacy",e)}/>
+								</p>
+
+								<p>
+								<label for="avatar_privacy">Make member avatar private?</label>{" "}
+								<input type="checkbox" name="avatar_privacy" checked={edit.member.avatar_privacy == "private" ? true : false} onChange={(e)=>this.handleChange("avatar_privacy",e)}/>
+								</p>
+
+								<p>
+								<label for="metadata_privacy">Make member metadata (message count, etc) private?</label>{" "}
+								<input type="checkbox" name="metadata_privacy" checked={edit.member.metadata_privacy == "private" ? true : false} onChange={(e)=>this.handleChange("metadata_privacy",e)}/>
+								</p>
 							</div>
 							</div>
 							{this.state.delete == 1 && <p className="App-error">Are you sure you want to delete this member?</p>}

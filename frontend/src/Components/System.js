@@ -149,7 +149,8 @@ class System extends Component {
 		return new Promise(async res => {
 			for (let i = 0; i < this.state.members.length; i++) {
 				var member = this.state.members[i];
-				member.privacy = val;
+				member.visibility = val;
+				delete member.privacy;
 				await axios("/pkapi/m/"+member.id, {
 					method: "PATCH",
 					data: member,
