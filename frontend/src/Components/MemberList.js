@@ -154,7 +154,7 @@ class MemberList extends Component {
 	            		var qmatch = !query || 
 	            					 (m.name.toLowerCase().includes(query.toLowerCase()) || 
 	            					  m.displayname && m.displayname.toLowerCase().includes(query.toLowerCase()));
-	            		var hmatch = hide || m.privacy == "public";
+	            		var hmatch = hide || m.visibility == "public";
 
 	            		if(qmatch && hmatch) return (
 	            			<MemberCard

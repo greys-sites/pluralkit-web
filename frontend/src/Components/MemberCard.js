@@ -253,13 +253,13 @@ class MemberCard extends Component {
 			}
 			
 			var member = res.data;
-			this.setState({
+			await this.setState({
 				member: {id: "new"},
 				edit: {enabled: false, member: null},
 				expanded: false,
 				delete: 0
 			})
-			this.props.onCreate(member);
+			await this.props.onCreate(member);
 		}
 	}
 
