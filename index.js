@@ -3,7 +3,10 @@ const path      = require('path');
 const fs        = require('fs');
 const axios    = require('axios');
 
-const axinst = axios.create({validateStatus: (s) => s < 500});
+const axinst = axios.create({
+    validateStatus: (s) => s < 500,
+    baseURL: 'https://api.pluralkit.me/v1'
+});
 const app = express();
 
 app.use(require('cookie-parser')());
@@ -28,13 +31,13 @@ app.get('/api/user', async (req,res)=> {
             Authorization: req.cookies.token
         }
 
-        var system = (await axinst('https://api.pluralkit.me/s', {headers}));
+        var system = (await axinst('/s', {headers}));
         if(system.status != 200) return res.status(404).send(undefined);
         system = system.data;
 
         try {
-            var members = (await axinst('https://api.pluralkit.me/s/'+system.id+"/members", {headers})).data;
-            var fronters = (await axinst('https://api.pluralkit.me/s/'+system.id+"/fronters", {headers})).data;
+            var members = (await axinst('/s/'+system.id+"/members", {headers})).data;
+            var fronters = (await axinst('/s/'+system.id+"/fronters", {headers})).data;
         } catch(e) {
             console.log(e);
             res.status(404).send(e.message);
@@ -53,17 +56,17 @@ app.get('/api/user', async (req,res)=> {
 })
 
 app.get('/api/user/:id', async (req,res)=> {
-    var user = await axinst('https://api.pluralkit.me/s/'+req.params.id);
+    var user = await axinst('/s/'+req.params.id);
     if(user.status != 200) {
         res.status(404).send(undefined)
     } else {
         user = {system: user.data};
 
-        var members = await axinst('https://api.pluralkit.me/s/'+user.system.id+"/members");
+        var members = await axinst('/s/'+user.system.id+"/members");
         if(members.status == 403) user.members = {private: true};
         else user.members = members.data.sort(sortfunc);
 
-        var fronters = await axinst('https://api.pluralkit.me/s/'+user.system.id+"/fronters");
+        var fronters = await axinst('/s/'+user.system.id+"/fronters");
         if(fronters.status == 200) user.fronters = fronters.data;
         else if(fronters.status == 403) user.fronters = {private: true};
         else user.fronters = {};
@@ -78,9 +81,9 @@ app.post('/api/login', async (req,res)=> {
     }
 
     try {
-        var system = (await axinst('https://api.pluralkit.me/s', {headers})).data;
-        var members = (await axinst('https://api.pluralkit.me/s/'+system.id+"/members", {headers})).data;
-        var fronters = (await axinst('https://api.pluralkit.me/s/'+system.id+"/fronters", {headers})).data;
+        var system = (await axinst('/s', {headers})).data;
+        var members = (await axinst('/s/'+system.id+"/members", {headers})).data;
+        var fronters = (await axinst('/s/'+system.id+"/fronters", {headers})).data;
     } catch(e) {
         console.log(e);
         res.status(404).send(e.message);
@@ -104,7 +107,7 @@ app.get('/api/logout', async (req,res)=> {
 })
 
 app.get('/pkapi/*', async (req,res) => {
-    var result = await axinst(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
         headers: {
             "Authorization": req.get("Authorization")
         }
@@ -114,7 +117,7 @@ app.get('/pkapi/*', async (req,res) => {
 });
 
 app.post('/pkapi/*', async (req,res) => {
-    var result = await axinst(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
         method: "POST",
         data: JSON.stringify(req.body),
         headers: {
@@ -127,7 +130,7 @@ app.post('/pkapi/*', async (req,res) => {
 });
 
 app.patch('/pkapi/*', async (req,res) => {
-    var result = await axinst(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
         method: "PATCH",
         data: JSON.stringify(req.body),
         headers: {
@@ -140,7 +143,7 @@ app.patch('/pkapi/*', async (req,res) => {
 });
 
 app.delete('/pkapi/*', async (req,res) => {
-    var result = await axinst(`https://api.pluralkit.me${req.path.replace("/pkapi","")}`, {
+    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
         method: "DELETE",
         headers: {
             "Authorization": req.get("Authorization"),
@@ -152,7 +155,7 @@ app.delete('/pkapi/*', async (req,res) => {
 });
 
 app.get("/profile/:id", async (req, res)=> {
-    var prof = await axinst('https://api.pluralkit.me/s/'+req.params.id);
+    var prof = await axinst('/s/'+req.params.id);
     if(prof.status != 200) {
         var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
         index = index.replace('$TITLE','404 || PluralKit Web');
