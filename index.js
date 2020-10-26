@@ -3,6 +3,8 @@ const path      = require('path');
 const fs        = require('fs');
 const axios    = require('axios');
 
+const indexPage = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+
 const axinst = axios.create({
     validateStatus: (s) => s < 500,
     baseURL: 'https://api.pluralkit.me/v1'
@@ -157,7 +159,7 @@ app.delete('/pkapi/*', async (req,res) => {
 app.get("/profile/:id", async (req, res)=> {
     var prof = await axinst('/s/'+req.params.id);
     if(prof.status != 200) {
-        var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+        var index = indexPage;
         index = index.replace('$TITLE','404 || PluralKit Web');
         index = index.replace('$DESC','System not found');
         index = index.replace('$TWITDESC','System not found');
@@ -182,7 +184,7 @@ app.get("/profile/:id", async (req, res)=> {
 })
 
 app.get("/", async (req, res)=> {
-    var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+    var index = indexPage;
     index = index.replace('$TITLE','PluralKit Web');
     index = index.replace('$DESC','Web interface for PluralKit');
     index = index.replace('$TWITDESC','Web interface for PluralKit');
@@ -196,7 +198,7 @@ app.get("/", async (req, res)=> {
 app.use(express.static(path.join(__dirname, 'frontend/build')));
 
 app.use("/*", async (req, res, next)=> {
-    var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+    var index = indexPage;
     index = index.replace('$TITLE','PluralKit Web');
     index = index.replace('$DESC','Web interface for PluralKit');
     index = index.replace('$TWITDESC','Web interface for PluralKit');
