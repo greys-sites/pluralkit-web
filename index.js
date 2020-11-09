@@ -109,10 +109,10 @@ app.get('/api/logout', async (req,res)=> {
 })
 
 const pkApi = (method) => async (req, res) => {
-        let request = { headers: { authorization: req.get("Authorization") } };
-        if (!["GET", "DELETE"].includes(method)) {
+        let request = { method, headers: { authorization: req.get("Authorization") } };
+        if (req.body) {
             request.headers["content-type"] = "application/json";
-            request.body = JSON.stringify(req.body);
+            request.data = JSON.stringify(req.body);
         }
         let result = await axinst(`${req.path.replace("/pkapi","")}`, request);
         res.status(result.status).send(result.data);
