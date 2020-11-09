@@ -3,6 +3,8 @@ const path      = require('path');
 const fs        = require('fs');
 const axios    = require('axios');
 
+const indexPage = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+
 const axinst = axios.create({
     validateStatus: (s) => s < 500,
     baseURL: 'https://api.pluralkit.me/v1'
@@ -106,58 +108,25 @@ app.get('/api/logout', async (req,res)=> {
     res.status(200).send(null)
 })
 
-app.get('/pkapi/*', async (req,res) => {
-    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
-        headers: {
-            "Authorization": req.get("Authorization")
+const pkApi = (method) => async (req, res) => {
+        let request = { headers: { authorization: req.get("Authorization") } };
+        if (!["GET", "DELETE"].includes(method)) {
+            request.headers["content-type"] = "application/json";
+            request.body = JSON.stringify(req.body);
         }
-    })
+        let result = await axinst(`${req.path.replace("/pkapi","")}`, request);
+        res.status(result.status).send(result.data);
+};
 
-    res.status(result.status).send(result.data);
-});
-
-app.post('/pkapi/*', async (req,res) => {
-    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
-        method: "POST",
-        data: JSON.stringify(req.body),
-        headers: {
-            "Authorization": req.get("Authorization"),
-            "Content-Type": "application/json"
-        }
-    })
-
-    res.status(result.status).send(result.data);
-});
-
-app.patch('/pkapi/*', async (req,res) => {
-    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
-        method: "PATCH",
-        data: JSON.stringify(req.body),
-        headers: {
-            "Authorization": req.get("Authorization"),
-            "Content-Type": "application/json"
-        }
-    })
-
-    res.status(result.status).send(result.data);
-});
-
-app.delete('/pkapi/*', async (req,res) => {
-    var result = await axinst(`${req.path.replace("/pkapi","")}`, {
-        method: "DELETE",
-        headers: {
-            "Authorization": req.get("Authorization"),
-            "Content-Type": "application/json"
-        }
-    })
-
-    res.status(result.status).send(result.data);
-});
+app.get('/pkapi/*', pkApi("GET"));
+app.post('/pkapi/*', pkApi("POST"));
+app.patch('/pkapi/*', pkApi("PATCH"));
+app.delete('/pkapi/*', pkApi("DELETE"));
 
 app.get("/profile/:id", async (req, res)=> {
     var prof = await axinst('/s/'+req.params.id);
     if(prof.status != 200) {
-        var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+        var index = indexPage;
         index = index.replace('$TITLE','404 || PluralKit Web');
         index = index.replace('$DESC','System not found');
         index = index.replace('$TWITDESC','System not found');
@@ -169,7 +138,7 @@ app.get("/profile/:id", async (req, res)=> {
     } else {
         prof = prof.data;
         if(!prof.name) prof.name = "(unnamed)";
-        var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+        var index = indexPage;
         index = index.replace('$TITLE',prof.name+' || PluralKit Web');
         index = index.replace('$DESC','System on PluralKit');
         index = index.replace('$TWITDESC','System on PluralKit');
@@ -181,8 +150,8 @@ app.get("/profile/:id", async (req, res)=> {
     }
 })
 
-app.get("/", async (req, res)=> {
-    var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+async function getRoot(_, res) {
+    let index = indexPage;
     index = index.replace('$TITLE','PluralKit Web');
     index = index.replace('$DESC','Web interface for PluralKit');
     index = index.replace('$TWITDESC','Web interface for PluralKit');
@@ -191,21 +160,11 @@ app.get("/", async (req, res)=> {
     index = index.replace('$OGDESC','Web interface for PluralKit');
     index = index.replace('$OEMBED','oembed.json');
     res.send(index);
-})
+}
 
+app.get("/", getRoot);
 app.use(express.static(path.join(__dirname, 'frontend/build')));
-
-app.use("/*", async (req, res, next)=> {
-    var index = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
-    index = index.replace('$TITLE','PluralKit Web');
-    index = index.replace('$DESC','Web interface for PluralKit');
-    index = index.replace('$TWITDESC','Web interface for PluralKit');
-    index = index.replace('$TWITTITLE','PluralKit Web');
-    index = index.replace('$OGTITLE','PluralKit Web');
-    index = index.replace('$OGDESC','Web interface for PluralKit');
-    index = index.replace('$OEMBED','oembed.json');
-    res.send(index);
-})
+app.use("/*", getRoot);
 
 const port = process.env.PORT || 8080;
 app.listen(port);
