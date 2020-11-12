@@ -7,7 +7,7 @@ A web interface for @xSke's [PluralKit](https://github.com/xSke/Pluralkit)
 If you want to do some work on it, you can run it yourself locally. To do so, follow these steps:
 
 1. Clone the repo and `cd` into it
-2. Run `npm install && cd frontend && npm install` to install all packages (alterative: `yarn install && cd frontend && yarn install`)
+2. Run `npm install && cd frontend && npm install` to install all packages (alternative: `yarn install && cd frontend && yarn install`)
 3. Use `npm run build` in the root folder
 4. Navigate to `localhost:8080` in your browser
 
