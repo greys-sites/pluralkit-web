@@ -102,14 +102,7 @@ class MemberList extends Component {
 	}
 
 	deleteMember = async (id) => {
-		var res = await axios('/pkapi/m/'+id, {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-				"Authorization": this.state.token
-
-			}
-		});
+		var res = await axios.delete('/pkapi/m/'+id);
 
 		if(res.status == 200) {
 			this.setState((state)=> {

@@ -47,13 +47,7 @@ class App extends Component {
 		var st = this.state;
 
 		try {
-			var res = await axios('/api/login', {
-				method: "POST",
-				data: JSON.stringify(st),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
+			var res = await axios.post('/api/login', st);
 		} catch(e) {
 			console.log(e);
 			res = e.message;

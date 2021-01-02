@@ -201,15 +201,7 @@ class MemberCard extends Component {
 
 		if(st.id != "new") {
 			try {
-				var res = await axios('/pkapi/m/'+st.id, {
-					method: "PATCH",
-					data: JSON.stringify(st),
-					headers: {
-						"Content-Type": "application/json",
-						"Authorization": this.state.token
-
-					}
-				});
+				var res = await axios.patch('/pkapi/m/'+st.id, st);
 			} catch(e) {
 				console.log(e.response);
 				this.setState({submitted: true, error: e.response.data});
@@ -238,15 +230,7 @@ class MemberCard extends Component {
 			await this.state.onEdit(this.state.member)
 		} else {
 			try {
-				var res = await axios('/pkapi/m', {
-					method: "POST",
-					data: JSON.stringify(st),
-					headers: {
-						"Content-Type": "application/json",
-						"Authorization": this.state.token
-
-					}
-				});
+				var res = await axios.post('/pkapi/m', st);
 			} catch(e) {
 				console.log(e);
 				this.setState({submitted: true, error: e.response.data});

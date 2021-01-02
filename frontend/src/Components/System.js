@@ -110,15 +110,7 @@ class System extends Component {
 		delete st.member_privacy;
 
 		try {
-			var res = await axios('/pkapi/s', {
-				method: "PATCH",
-				data: JSON.stringify(st),
-				headers: {
-					"Content-Type": "application/json",
-					"Authorization": this.state.token
-
-				}
-			});
+			var res = await axios.patch('/pkapi/s', st);
 		} catch(e) {
 			this.setState({submitted: true, error: e.response.data});
 			return;
@@ -157,13 +149,7 @@ class System extends Component {
 				member.pronoun_privacy = val;
 				member.metadata_privacy = val;
 				delete member.privacy;
-				await axios("/pkapi/m/"+member.id, {
-					method: "PATCH",
-					data: member,
-					headers: {
-						Authorization: this.state.token
-					}
-				})
+				await axios.patch("/pkapi/m/"+member.id, member)
 				this.setState({progress: i});
 				await sleep(500);
 			}
