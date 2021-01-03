@@ -10,6 +10,7 @@
     "axios": "^0.19.2",
     "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
+    "image-type": "^4.1.0",
     "node-fetch": "^2.6.1",
     "react": "^16.8.5",
     "react-cookies": "^0.1.0",

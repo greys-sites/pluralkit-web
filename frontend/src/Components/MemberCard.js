@@ -1,7 +1,8 @@
 import React, { Component, Fragment as Frag } from 'react';
-import showdown from 'showdown';
-import sanitize from 'sanitize-html';
-import axios 	from 'axios';
+import showdown		from 'showdown';
+import sanitize 	from 'sanitize-html';
+import axios 		from 'axios';
+import * as imgType from 'image-type';
 
 import Dropdown from './Dropdown';
 
@@ -12,22 +13,22 @@ showdown.setOption('underline', true);
 showdown.setOption('strikethrough', true);
 
 var tags = [
-				'em',
-				'strong',
-				'i',
-				'b',
-				'del',
-				'u',
-				'p',
-				'a',
-				'code',
-				'pre',
-				'br',
-				'blockquote'
-			];
+	'em',
+	'strong',
+	'i',
+	'b',
+	'del',
+	'u',
+	'p',
+	'a',
+	'code',
+	'pre',
+	'br',
+	'blockquote'
+];
 
 var conv = new showdown.Converter();
-
+const urlExcept = ['imgur.com', 'cdn.discordapp.com'];
 
 class MemberCard extends Component {
 	constructor(props) {
@@ -198,6 +199,27 @@ class MemberCard extends Component {
 			if(tag.prefix == null) tag.prefix = "";
 			if(tag.suffix == null) tag.suffix = "";
 		});
+		
+		if(st.avatar_url) {
+			try {
+				var img = (await axios(st.avatar_url, {
+					responseType: 'arraybuffer'
+				})).data;
+
+				img = Buffer.from(img);
+				var type = imgType(img);
+				if(!img || !type || !['jpg', 'png', 'jpeg', 'gif'].includes(type.ext)) {
+					throw new Error("Invalid image");
+				}
+			} catch(e) {
+				console.log(e.message);
+				if(!urlExcept.find(u => st.avatar_url.includes(u))) {
+					this.setState({submitted: true, error: e.message});
+					setTimeout(()=> this.setState({error: null}), 5000);
+					return;
+				}
+			}
+		}
 
 		if(st.id != "new") {
 			try {
@@ -244,7 +266,6 @@ class MemberCard extends Component {
 					headers: {
 						"Content-Type": "application/json",
 						"Authorization": this.state.token
-
 					}
 				});
 			} catch(e) {
