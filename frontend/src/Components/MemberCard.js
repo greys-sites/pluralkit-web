@@ -28,7 +28,11 @@ var tags = [
 ];
 
 var conv = new showdown.Converter();
-const urlExcept = ['imgur.com', 'cdn.discordapp.com'];
+
+// i forgot type="url" exists
+// still gonna hold onto this for now
+//const urlPattern = /(?:http(s)?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}(?:\.[a-z]{2,6})\b(?:[-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)(?:\.png|\.jpe?g|\.gif|\.webp)\??(?:[-a-zA-Z0-9@:%_\+.~#?]*\=[-a-zA-Z0-9@:%_\+.~#?]&?)*$/;
+//const urlExcept = ['imgur.com', 'cdn.discordapp.com'];
 
 class MemberCard extends Component {
 	constructor(props) {
@@ -200,26 +204,31 @@ class MemberCard extends Component {
 			if(tag.suffix == null) tag.suffix = "";
 		});
 		
-		if(st.avatar_url) {
-			try {
-				var img = (await axios(st.avatar_url, {
-					responseType: 'arraybuffer'
-				})).data;
-
-				img = Buffer.from(img);
-				var type = imgType(img);
-				if(!img || !type || !['jpg', 'png', 'jpeg', 'gif'].includes(type.ext)) {
-					throw new Error("Invalid image");
-				}
-			} catch(e) {
-				console.log(e.message);
-				if(!urlExcept.find(u => st.avatar_url.includes(u))) {
-					this.setState({submitted: true, error: e.message});
-					setTimeout(()=> this.setState({error: null}), 5000);
-					return;
-				}
-			}
-		}
+		// if(st.avatar_url) {
+			// if(!st.avatar_url.match(urlPattern)) {
+				// this.setState({submitted: true, error: 'Avatar URL invalid'});
+				// setTimeout(()=> this.setState({error: null}), 5000);
+				// return;
+			// }
+			// try {
+				// var img = (await axios(st.avatar_url, {
+					// responseType: 'arraybuffer'
+				// })).data;
+// 
+				// img = Buffer.from(img);
+				// var type = imgType(img);
+				// if(!img || !type || !['jpg', 'png', 'jpeg', 'gif'].includes(type.ext)) {
+					// throw new Error("Invalid image");
+				// }
+			// } catch(e) {
+				// console.log(e.message);
+				// if(!urlExcept.find(u => st.avatar_url.includes(u))) {
+					// this.setState({submitted: true, error: e.message});
+					// setTimeout(()=> this.setState({error: null}), 5000);
+					// return;
+				// }
+			// }
+		// }
 
 		if(st.id != "new") {
 			try {
@@ -325,7 +334,7 @@ class MemberCard extends Component {
 								<img className="App-memberAvatar" style={{boxShadow: "0 0 0 5px #"+(edit.member.color ? edit.member.color : "aaa")}} src={edit.member.avatar_url || "/default.png"} alt={edit.member.name + "'s avatar"}/>
 								<input placeholder="name" type="text" name="name" value={edit.member.name} onChange={(e)=>this.handleChange("name",e)}/>
 								<input placeholder="display name" type="text" name="display_name" value={edit.member.display_name} onChange={(e)=>this.handleChange("display_name",e)}/>
-								<input placeholder="avatar url" type="text" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
+								<input placeholder="avatar url" type="url" name="avatar_url" value={edit.member.avatar_url} onChange={(e)=>this.handleChange("avatar_url",e)}/>
 								<input placeholder="color" pattern="[A-Fa-f0-9]{6}" type="text" name="color" value={edit.member.color} onChange={(e)=>this.handleChange("color",e)}/>
 								<p style={{width: "90%"}}>
 									<Dropdown style={{width: "100%", margin: 0}} list = {edit.proxylist.concat({name: "Add new"})} callback = {this.selectProxy} />

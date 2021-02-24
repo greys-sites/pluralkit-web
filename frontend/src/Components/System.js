@@ -203,7 +203,7 @@ class System extends Component {
 					<img className="App-avatar" src={edit.vals.avatar_url ? edit.vals.avatar_url : "/default.png"} alt="System avatar" />
 					<div className="App-sysWrapper">
 						<div id="properties-panel">
-							<input placeholder="avatar url" type="text" name="avatar_url" onChange={(e)=>this.handleChange("avatar_url", e)} value={edit.vals.avatar_url} />
+							<input placeholder="avatar url" type="url" name="avatar_url" onChange={(e)=>this.handleChange("avatar_url", e)} value={edit.vals.avatar_url} />
 							<input placeholder="name" type="text" name="name" onChange={(e)=>this.handleChange("name", e)} value={edit.vals.name} />
 							<input placeholder="tag" type="text" name="tag" onChange={(e)=>this.handleChange("tag", e)} value={edit.vals.tag} />
 							<textarea placeholder="description" onChange={(e)=>this.handleChange("description",e)}>{edit.vals.description}</textarea>

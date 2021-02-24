@@ -247,7 +247,7 @@ body {
   width: 100%;
 }
 
-input[type="text"]:not(.App-searchbar) {
+input[type="text"]:not(.App-searchbar), input[type="url"] {
   width: 90%;
 }
 
