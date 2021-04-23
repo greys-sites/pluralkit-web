@@ -151,7 +151,7 @@ class System extends Component {
 				var member = this.state.members[i];
 				member.visibility = val;
 				member.name_privacy = val;
-				member.descriptions_privacy = val;
+				member.description_privacy = val;
 				member.avatar_privacy = val;
 				member.birthday_privacy = val;
 				member.pronoun_privacy = val;
