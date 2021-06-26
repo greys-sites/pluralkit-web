@@ -99,7 +99,7 @@ app.post('/api/login', async (req,res)=> {
         fronters: typeof fronters == "object" ? fronters : {}
     };
     
-    res.cookie('token', req.body.token);
+    res.cookie('token', req.body.token, {maxAge: 30 * 24 * 60 * 60 * 1000}); // 30 days
     res.status(200).send(user)
 })
 
