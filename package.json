@@ -1,0 +1,20 @@
+{
+  "name": "pk-rewrite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd frontend && npm run dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "axios": "^0.21.1",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "pkapi.js": "^1.0.2",
+    "sanitize-html": "^2.4.0",
+    "showdown": "^1.9.1"
+  }
+}

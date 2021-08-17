@@ -1,0 +1,93 @@
+html, body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background: #111;
+	font-size: 1.1rem;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+a {
+	color: #5de;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #256;
+}
+
+label {
+	display: block;
+}
+
+input, button, select, textarea {
+	font-family: inherit;
+	font-size: inherit;
+	-webkit-padding: 0.4em 0;
+	padding: 0.4em;
+	margin: 0 0 0.5em 0;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+}
+
+input:disabled {
+	color: #ccc;
+}
+
+button {
+	background-color: #389;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    padding: 0 10px;
+    text-align: center;
+    text-decoration: none;
+    margin: 5px;
+    cursor: pointer;
+    height: 2em;
+    max-height: 50px;
+    line-height: 100%;
+    transition: .2s background-color linear;
+}
+
+button:disabled {
+	color: #666;
+}
+
+button:not(:disabled):active {
+	background-color: #256;
+	transform: scale(.9);
+}
+
+button:focus, button:hover {
+	background-color: #4ab;
+}
+
+blockquote {
+	background: rgba(0,0,0,.25);
+	margin: 0;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 20px;
+}
