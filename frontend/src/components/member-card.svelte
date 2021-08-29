@@ -3,12 +3,15 @@
 	import sanitize from 'sanitize-html';
 
 	export let m;
-	var d = new Date(m.created);
-	m.created = `${d.getMonth() + 1}.${d.getDate()}.${d.getFullYear()}`;
+	
+	$: {
+		let d = new Date(m.created)
+		m.created = `${d.getMonth() + 1}.${d.getDate()}.${d.getFullYear()}`;
 
-	if(m.birthday) {
-		d = new Date(m.birthday);
-		m.birthday = `${d.getMonth() + 1}.${d.getDate()}.${d.getFullYear()}`;
+		if(m.birthday) {
+			d = new Date(m.birthday);
+			m.birthday = `${d.getMonth() + 1}.${d.getDate()}.${d.getFullYear()}`;
+		}
 	}
 </script>
 
@@ -124,7 +127,7 @@
 	}
 
 	.description {
-		max-height: 100%;
+		max-height: 150px;
 		grid-area: desc;
 		text-align: left;
 		padding: 2px 5px;
