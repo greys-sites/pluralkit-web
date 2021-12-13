@@ -3,11 +3,12 @@ require('dotenv').config()
 const express   = require('express');
 const path      = require('path');
 const fs        = require('fs');
-const axios    = require('axios');
+const axios		= require('axios');
+const bp 		= require('body-parser');
 
 const port = process.env.PORT || 8080;
 const version = process.env.VERSION || 1;
-const indexPage = fs.readFileSync(path.join(__dirname+'/frontend/build/index.html'),'utf8');
+const indexPage = fs.readFileSync(path.join(__dirname+'/frontend/public/index.html'),'utf8');
 
 const axinst = axios.create({
     validateStatus: (s) => s < 500,
@@ -15,9 +16,9 @@ const axinst = axios.create({
 });
 const app = express();
 
-app.use(require('cookie-parser')());
-app.use(express.json());
+app.use(bp.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(require('cookie-parser')());
 
 const sortfunc = function(a, b) {
     a = (a.display_name || a.name).toLowerCase();
@@ -82,12 +83,16 @@ app.get('/api/user/:id', async (req,res)=> {
 })
 
 app.post('/api/login', async (req,res)=> {
+	if(!req.body?.token) return res.status(400).send('Token missing.');
+	
     var headers = {
         Authorization: req.body.token
     }
 
     try {
-        var system = (await axinst('/s', {headers})).data;
+        var system = (await axinst('/s', {headers}));
+        if(system.status != 200) return res.status(401).send('Token invalid.');
+        system = system.data;
         var members = (await axinst('/s/'+system.id+"/members", {headers})).data;
         var fronters = (await axinst('/s/'+system.id+"/fronters", {headers})).data;
     } catch(e) {
@@ -167,7 +172,7 @@ async function getRoot(_, res) {
 }
 
 app.get("/", getRoot);
-app.use(express.static(path.join(__dirname, 'frontend/build')));
+app.use(express.static(path.join(__dirname, 'frontend/public')));
 app.use("/*", getRoot);
 
 app.listen(port);

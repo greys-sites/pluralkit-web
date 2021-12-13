@@ -118,5 +118,5 @@
 
 	.description p {
 		margin: 0;
-	}
+	}	
 </style>

@@ -1,6 +1,17 @@
 <script>
 	import SystemCard from './components/system-card.svelte';
 	import MemberList from './components/member-list.svelte';
+	import Login from './components/login.svelte';
+
+	let user;
+	let fetched = false;
+	$: fetch('/api/user')
+		.then((d) => d.json())
+		.then((u) => {
+			user = u;
+			fetched = true;
+		})
+		.catch(e => fetched = true);
 </script>
 
 <header>
@@ -9,10 +20,16 @@
 </header>
 
 <main>
-	<h1>System</h1>
-	<SystemCard />
-	<h1>Members</h1>
-	<MemberList />
+	{#if user}
+		<h1>System</h1>
+		<SystemCard s={user.system}/>
+		<h1>Members ({user.members.length})</h1>
+		<MemberList members={user.members}/>
+	{:else if fetched}
+		<Login />
+	{:else}
+		<h1>Loading...</h1>
+	{/if}
 </main>
 
 <style>
@@ -36,7 +53,7 @@
 	main {
 		text-align: left;
 		margin: 0 auto;
-		width: 80%;
+		width: 90%;
 	}
 
 	h1 {

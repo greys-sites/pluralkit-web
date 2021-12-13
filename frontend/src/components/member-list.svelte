@@ -13,24 +13,13 @@
 		offset = (page - 1) * count;
 	})
 
-	let members;
-	fetch(`https://api.pluralkit.me/v1/s/kezkv/members`, {
-		headers: {'authorization': 'i8rJ1ZgmDHtASYZNeZGMLP9DMhlG9vvfmtdMHzdeRL91IiE4cTaIUsKQPRUATY1m'}
-	})
-		.then(r => r.json())
-		.then(data => {
-			members = data.sort((a, b) => {
-				a = a.name.toLowerCase();
-				b = b.name.toLowerCase();
-				return a > b ? 1 : a < b ? -1 : 0
-			});
-		})
+	export let members;
 	$: l = members && members.slice(offset, offset + count);
 	$: max = members && Math.ceil(members.length / count);
 </script>
 
 <div class="member-list">
-	{#if members && members.length > count}
+	{#if members && members.length > 10}
 	<div class="buttons">
 	<button class={page == 1 ? "disabled" : ""} on:click={() => page - 1 > 0 ? $pstore -= 1 : 1}>page {page - 1 > 0 ? page - 1 : 1}</button>
 
