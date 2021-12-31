@@ -41,6 +41,7 @@ app.get('/api/user', async (req,res)=> {
         var system = (await axinst('/s', {headers}));
         if(system.status != 200) return res.status(404).send(undefined);
         system = system.data;
+        console.log(system.description)
 
         try {
             var members = (await axinst('/s/'+system.id+"/members", {headers})).data;

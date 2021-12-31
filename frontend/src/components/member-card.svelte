@@ -2,6 +2,7 @@
 	import showdown from 'showdown';
 	import sanitize from 'sanitize-html';
 	import twemoji from 'twemoji';
+	import { pad, parseDiscordEmoji } from '../utils.js';
 
 	showdown.setOption('simplifiedAutoLink', true);
 	showdown.setOption('simpleLineBreaks', true);
@@ -9,7 +10,7 @@
 	showdown.setOption('underline', true);
 	showdown.setOption('strikethrough', true);
 
-	var tags = [
+	var allowedTags = [
 		'em',
 		'strong',
 		'i',
@@ -25,6 +26,15 @@
 		'img'
 	];
 
+	const allowedAttributes = {
+		img: [
+			'src',
+			'class',
+			'alt',
+			'draggable'
+		]
+	}
+
 	var conv = new showdown.Converter();
 
 	export let m;
@@ -33,7 +43,7 @@
 	
 	$: {
 		let d = new Date(m.created)
-		m.created = `${d.getMonth() + 1}.${d.getDate()}.${d.getFullYear()}`;
+		m.created = `${pad(d.getMonth() + 1)}.${pad(d.getDate())}.${d.getFullYear()}`;
 
 		if(m.birthday) {
 			d = new Date(m.birthday);
@@ -45,23 +55,8 @@
 			m.description = conv.makeHtml(m.description);
 			m.description = twemoji.parse(m.description);
 			m.description = parseDiscordEmoji(m.description);
+			m.description = sanitize(m.description, {allowedTags, allowedAttributes});
 		}
-	}
-
-	const de_regex = /\<(a?)\:\w*\:(\d*)\>/igm;
-	const de_url = 'https://cdn.discordapp.com/emojis/:id.:ext?v=1'
-	function parseDiscordEmoji(str) {
-		return str.replace(de_regex, (...args) => {
-			var a = args[1];
-			var id = args[2];
-
-			return (
-				`<img class="emoji" src="`+
-				de_url.replace(':id', id)
-					.replace(':ext', a ? 'gif' : 'png') +
-				`" />`
-			)
-		})
 	}
 </script>
 

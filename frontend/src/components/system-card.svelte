@@ -1,6 +1,8 @@
 <script>
 	import showdown from 'showdown';
 	import sanitize from 'sanitize-html';
+	import twemoji from 'twemoji';
+	import { pad, parseDiscordEmoji } from '../utils.js';
 
 	showdown.setOption('simplifiedAutoLink', true);
 	showdown.setOption('simpleLineBreaks', true);
@@ -8,7 +10,7 @@
 	showdown.setOption('underline', true);
 	showdown.setOption('strikethrough', true);
 
-	var tags = [
+	var allowedTags = [
 		'em',
 		'strong',
 		'i',
@@ -20,8 +22,18 @@
 		'code',
 		'pre',
 		'br',
-		'blockquote'
+		'blockquote',
+		'img'
 	];
+
+	const allowedAttributes = {
+		img: [
+			'src',
+			'class',
+			'alt',
+			'draggable'
+		]
+	}
 
 	var conv = new showdown.Converter();
 
@@ -38,15 +50,16 @@
 			`.${d.getFullYear()}`;
 
 		if(!sys.description) sys.description = "(no description)";
-		else sys.description = sanitize(conv.makeHtml(sys.description), {allowedTags: tags})
+		else {
+			sys.description = conv.makeHtml(sys.description);
+			sys.description = twemoji.parse(sys.description);
+			sys.description = parseDiscordEmoji(sys.description);
+			sys.description = sanitize(sys.description, {allowedTags, allowedAttributes});
+		}
 
 		if(fr && fr.members && fr.members.length) {
 			front = fr.members.map(m => m.name).join(', ');
 		}
-	}
-
-	function pad(num) {
-		return ('00' + num).slice(-2);
 	}
 </script>
 
