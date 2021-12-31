@@ -10,6 +10,7 @@
 		.then((u) => {
 			user = u;
 			fetched = true;
+			user.system.count = user.members.length;
 		})
 		.catch(e => fetched = true);
 </script>
@@ -22,7 +23,7 @@
 <main>
 	{#if user}
 		<h1>System</h1>
-		<SystemCard s={user.system}/>
+		<SystemCard sys={user.system} fr={user.fronters}/>
 		<h1>Members ({user.members.length})</h1>
 		<MemberList members={user.members}/>
 	{:else if fetched}

@@ -1,47 +1,94 @@
 <script>
+	import showdown from 'showdown';
+	import sanitize from 'sanitize-html';
+
+	showdown.setOption('simplifiedAutoLink', true);
+	showdown.setOption('simpleLineBreaks', true);
+	showdown.setOption('openLinksInNewWindow', true);
+	showdown.setOption('underline', true);
+	showdown.setOption('strikethrough', true);
+
+	var tags = [
+		'em',
+		'strong',
+		'i',
+		'b',
+		'del',
+		'u',
+		'p',
+		'a',
+		'code',
+		'pre',
+		'br',
+		'blockquote'
+	];
+
+	var conv = new showdown.Converter();
+
+	export let sys;
+	export let fr;
+
+	let expanded = false;
+	let front = "(none)";
+	
+	$: {
+		let d = new Date(sys.created)
+		sys.created = `${pad(d.getMonth() + 1)}` +
+			`.${pad(d.getDate())}` +
+			`.${d.getFullYear()}`;
+
+		if(!sys.description) sys.description = "(no description)";
+		else sys.description = sanitize(conv.makeHtml(sys.description), {allowedTags: tags})
+
+		if(fr && fr.members && fr.members.length) {
+			front = fr.members.map(m => m.name).join(', ');
+		}
+	}
+
+	function pad(num) {
+		return ('00' + num).slice(-2);
+	}
 </script>
 
 <div class="system-card">
 	<div class="name-bar">
-		<img class="avatar" alt="system avatar" src="https://cdn.discordapp.com/attachments/481322557925228544/794013086956257280/ezgif-7-7cbf35f3b04d.gif" />
-		<span class="name"><strong>Grey Skies</strong> (kndhm)</span>
+		<img class="avatar" alt="system avatar" src={sys.avatar_url || "https://pk.greysdawn.com/default.png"} />
+		<span class="name"><strong>{sys.name || "(unnamed)"}</strong> ({sys.id})</span>
 		<button>edit</button>
 	</div>
 	<div class="info">
 		<span class="info-1">
-			<strong>Members:</strong> 113
+			<strong>Members:</strong> {sys.count}
 			<br/>
-			<strong>Tag:</strong> (GS)
+			<strong>Tag:</strong> {sys.tag}
 		</span>
 		<span class="info-2">
-			<strong>Avatar:</strong> <a href="/test">link</a>
+			<strong>Fronters:</strong> {front}
 			<br/>
-			<strong>Created:</strong> 03.21.2020
+			<strong>Created:</strong> {sys.created}
 		</span>
-		<span class="info-3"><strong>Fronters:</strong> Easy, Zinc, Mercury, Echo, Rust, ...</span>
+		<span class="info-3">
+		<strong>Avatar:</strong> <a href={sys.avatar_url}>link</a>
+			<br/>
+			<strong>Banner:</strong> <a href={sys.banner_url}>link</a>
+		</span>
 	</div>
 	<div class="description">
-		<p><strong>Name:</strong> The Grey Skies<br><strong>System type:</strong> Traumagenic, polyfragmented<br><strong>Body age:</strong> 21<br><strong>Members:</strong> 100+<br><strong>List:</strong> <a href="https://greysdawn.com/system">https://greysdawn.com/system</a></p>
+		{@html sys.description}
 	</div>
 </div>
 
 <style>
 	.system-card {
 		height: auto;
-		margin: 0 auto;
+		max-height: 400px;
+		margin: 0 0 20px 0;
 		color: #ddd;
 		background: #333;
 		text-align: left;
-
-		display: grid; 
-		grid-template-columns: 1fr 1fr 1fr; 
-		grid-template-rows: .5fr .5fr 2fr;
-		gap: 0px 0px; 
-		grid-template-areas: 
-			"top top top"
-			"info info info" 
-			"desc desc desc";
-		/*align-items: center;*/
+		overflow-y: hidden;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.avatar {
@@ -75,48 +122,35 @@
 
 	.info {
 		grid-area: info;
-		height: 55px;
-		max-height: 55px;
-		overflow-y: auto;
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-template-rows: 1fr;
-		grid-template-areas:
-			"info-1 info-2 info-3";
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
 	}
 
-	.info-1 {
-		grid-area: info-1;
-		text-align: left;
+	.info > * {
 		margin-left: 5px;
-	}
-
-	.info-2 {
-		grid-area: info-2;
-		text-align: left;
-	}
-
-	.info-3 {
-		grid-area: info-3;
-		text-align: left;
-		margin-right: 5px;
+		margin-top: 2px;
 	}
 
 	.description {
+		/* max-height: 150px; */
 		grid-area: desc;
 		text-align: left;
 		padding: 2px 5px;
+		margin: 0;
 		overflow-y: auto;
 		overflow-x: hidden;
-		word-break: break-all;
+		word-break: break-word;
 		word-wrap: break-word;
-		height: 100%;
 		box-sizing: border-box;
 		border-top: 2px solid #111;
-		/*background: rgba(20,20,20,.5);*/
+		background: rgba(20,20,20,.5);
 	}
 
-	.description p {
-		margin: 0;
+	.description > :global(p) {
+		margin: 0 0 5px 0;
+		padding: 0;
 	}	
 </style>

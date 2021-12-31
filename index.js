@@ -21,8 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(require('cookie-parser')());
 
 const sortfunc = function(a, b) {
-    a = (a.display_name || a.name).toLowerCase();
-    b = (b.display_name || b.name).toLowerCase();
+    a = a.name.toLowerCase();
+    b = b.name.toLowerCase();
 
     return (
         a > b ? 1 :

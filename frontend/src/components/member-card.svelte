@@ -39,7 +39,7 @@
 		}
 
 		if(!m.description) m.description = "(no description)";
-	else m.description = sanitize(conv.makeHtml(m.description), {allowedTags: tags})
+		else m.description = sanitize(conv.makeHtml(m.description), {allowedTags: tags})
 	}
 </script>
 
@@ -67,9 +67,7 @@
 			<strong>Banner:</strong> <a href={m.banner_url}>link</a>
 		</span>
 	</div>
-	<div class="description">
-		{@html m.description}
-	</div>
+	<div class="description">{@html m.description}</div>
 </div>
 
 <style>
@@ -84,16 +82,18 @@
 		color: #ddd;
 		background: #333;
 		text-align: left;
+		display: flex;
+		flex-direction: column;
 
-		display: grid; 
-		grid-template-columns: 1fr 1fr 1fr; 
+		/*display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
 		grid-template-rows: 55px 1fr 2fr;
-		gap: 0px 0px; 
-		grid-template-areas: 
+		gap: 0px 0px;
+		grid-template-areas:
 			"top top top"
-			"info info info" 
+			"info info info"
 			"desc desc desc";
-		/*align-items: center;*/
+		align-items: center;*/
 	}
 
 	.avatar {
@@ -126,32 +126,21 @@
 	}
 
 	.info {
-		grid-area: info;
-		height: 55px;
-		max-height: 55px;
+		max-height: unset;
+		max-width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		overflow-x: auto;
 		overflow-y: auto;
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-template-rows: 1fr;
-		grid-template-areas:
-			"info-1 info-2 info-3";
+		transition: all .25s linear;
 	}
 
-	.info-1 {
-		grid-area: info-1;
-		text-align: left;
+	.info > * {
 		margin-left: 5px;
-	}
-
-	.info-2 {
-		grid-area: info-2;
-		text-align: left;
-	}
-
-	.info-3 {
-		grid-area: info-3;
-		text-align: left;
-		margin-right: 5px;
+		margin-top: 2px;
 	}
 
 	.description {
@@ -159,6 +148,7 @@
 		grid-area: desc;
 		text-align: left;
 		padding: 2px 5px;
+		margin: 0;
 		overflow-y: auto;
 		overflow-x: hidden;
 		word-break: break-word;
@@ -166,59 +156,23 @@
 		height: 100%;
 		box-sizing: border-box;
 		border-top: 2px solid #111;
-		/*background: rgba(20,20,20,.5);*/
+		background: rgba(20,20,20,.5);
 	}
 
-	.description p {
-		margin: 0;
-	}
-
-	.expand {
-		display: none;
+	.description > :global(p) {
+		margin: 0 0 5px 0;
+		padding: 0;
 	}
 
 	@media(max-width: 500px) {
-		.expand {
-			display: inline;
-		}
-
 		.member-card {
 			max-height: 58px;
-			display: block;
-			/* flex-direction: column;
-			align-items: space-between; */
 			transition: .25s linear all;
 			overflow-y: hidden;
 		}
 
-		.info {
-			max-height: unset;
-			max-width: 100%;
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			align-items: flex-start;
-			justify-content: flex-start;
-			overflow-x: auto;
-			overflow-y: auto;
-			transition: all .25s linear;
-		}
-
-		.info > * {
-			margin-left: 5px;
-			margin-top: 2px;
-		}
-
 		.member-card.expanded {
-			max-height: 400px
-		}
-
-		.description {
-			max-height: unset;
-		}
-
-		.description > p {
-			margin: 2px;
+			max-height: 400px;
 		}
 	}
 </style>
