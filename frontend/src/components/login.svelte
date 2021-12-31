@@ -25,18 +25,42 @@
 </script>
 
 <div>
+	<form on:submit|preventDefault={login}>
+		<label>Enter your token below. You can obtain this with "pk;token"
+		<br/>
+		<br/>
+		<input type=text bind:value={token} placeholder="token"/>
+		</label>
+		<button type="submit">Login</button>
+	</form>
 	<p class={"error " + (err?.length ? "show" : "")}>
 		{err}
 	</p>
-	<label>token:
-	<input type=text bind:value={token} />
-	</label>
-	<button on:click={login}>Login</button>
 </div>
 
 <style>
+	div {
+		text-align: center;
+		/*padding: 20px 0;*/
+	}
+
+	p {
+		margin: 10px;
+	}
+
+	input {
+		width: 50%;
+	    background-color: #333;
+	    border: 2px solid #000;
+	    border-radius: 5px;
+	    padding: 10px;
+	    color: #ccc;
+	    font-weight: bold;
+	}
+
 	.error {
-		color: red;
+		color: #6aecf9;
+		font-weight: bold;
 		display: none;
 	}
 
@@ -46,6 +70,5 @@
 
 	label {
 		color: white;
-		margin: 5px;
 	}
 </style>

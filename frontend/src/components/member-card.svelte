@@ -84,16 +84,7 @@
 		text-align: left;
 		display: flex;
 		flex-direction: column;
-
-		/*display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-template-rows: 55px 1fr 2fr;
-		gap: 0px 0px;
-		grid-template-areas:
-			"top top top"
-			"info info info"
-			"desc desc desc";
-		align-items: center;*/
+		transition: .25s linear all;
 	}
 
 	.avatar {
@@ -167,7 +158,6 @@
 	@media(max-width: 500px) {
 		.member-card {
 			max-height: 58px;
-			transition: .25s linear all;
 			overflow-y: hidden;
 		}
 
