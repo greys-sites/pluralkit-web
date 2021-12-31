@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build"
+    "build": "cd frontend && npm run build",
+    "heroku-postbuild": "cd frontend && npm install --only=dev && npm install && npm run build",
+    "start": "node index"
   },
   "author": "",
   "license": "ISC",
