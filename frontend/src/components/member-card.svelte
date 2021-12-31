@@ -1,6 +1,7 @@
 <script>
 	import showdown from 'showdown';
 	import sanitize from 'sanitize-html';
+	import twemoji from 'twemoji';
 
 	showdown.setOption('simplifiedAutoLink', true);
 	showdown.setOption('simpleLineBreaks', true);
@@ -20,7 +21,8 @@
 		'code',
 		'pre',
 		'br',
-		'blockquote'
+		'blockquote',
+		'img'
 	];
 
 	var conv = new showdown.Converter();
@@ -39,7 +41,27 @@
 		}
 
 		if(!m.description) m.description = "(no description)";
-		else m.description = sanitize(conv.makeHtml(m.description), {allowedTags: tags})
+		else {
+			m.description = conv.makeHtml(m.description);
+			m.description = twemoji.parse(m.description);
+			m.description = parseDiscordEmoji(m.description);
+		}
+	}
+
+	const de_regex = /\<(a?)\:\w*\:(\d*)\>/igm;
+	const de_url = 'https://cdn.discordapp.com/emojis/:id.:ext?v=1'
+	function parseDiscordEmoji(str) {
+		return str.replace(de_regex, (...args) => {
+			var a = args[1];
+			var id = args[2];
+
+			return (
+				`<img class="emoji" src="`+
+				de_url.replace(':id', id)
+					.replace(':ext', a ? 'gif' : 'png') +
+				`" />`
+			)
+		})
 	}
 </script>
 
@@ -48,7 +70,9 @@
 		<img class="avatar" alt="member avatar" src={m.avatar_url || "https://pk.greysdawn.com/default.png"}
 		style="border: 3px solid #{m.color || "aaa"}"/>
 		<span class="name"><strong>{m.name}</strong> ({m.id})</span>
-		<button on:click={(e) => e.stopPropagation()}>edit</button>
+		<button on:click|stopPropagation={() => {}}>
+			<img src="pencil.png" />
+		</button>
 	</div>
 	<div class="info">
 		<span class="info-1">
@@ -153,6 +177,12 @@
 	.description > :global(p) {
 		margin: 0 0 5px 0;
 		padding: 0;
+	}
+
+	button img {
+		height: 20px;
+		width: 20px;
+		vertical-align: middle;
 	}
 
 	@media(max-width: 500px) {
