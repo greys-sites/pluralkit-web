@@ -73,51 +73,61 @@ class App extends Component {
 	}
 
 	render() {
-		if(!this.state.check) return <Loading />;
 		return (
 			<div className="App">
-			<div className="App-scrollButtons">
-			<button type="button" className="App-button" onClick={this.scrollToTop}><FontAwesomeIcon icon={faArrowUp} /></button>
-			<button type="button" className="App-button" onClick={this.scrollToBottom}><FontAwesomeIcon icon={faArrowDown} /></button>
+				<h1>Site discontinued</h1>
+				<p>This site has been discontinued.
+					Instead, PK now has an official site <a href="https://dash.pluralkit.me">here</a>
+					In the future this site may be re-released with a new design. Until then, this page will be up for a bit
+					before the site is removed entirely. Sorry for the inconvenience!
+				</p>
 			</div>
-			<Router>
-				<header className="App-header">
-				<a className="App-link" href="/">
-				PluralKit Web
-				</a>
-				<div className="App-buttons">
-				{this.state.user &&
-					<button className="App-button" onClick={()=>this.logOut()}>Logout</button>
-				}
-				</div>
-				</header>
-				{this.state.user ?
-					<Route exact path="/" render={(props)=> <Dashboard {...props} user={this.state.user} />} /> :
-					<Route exact path="/" render={(props)=> 
-						<Frag>
-							<div className="App-login">
-							<p>Enter your token below. You can get this with "pk;token"</p>
-							<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
-							<form style={{textAlign: "center"}} onSubmit={this.logIn}>
-								<input type="text"
-								placeholder="token"
-				            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
-				            	/>
-				            <button type="submit" className="App-button">Submit</button>
-							</form>
-							</div>
-						</Frag>
-					}
-					/>
-				}
+		)
+// 		if(!this.state.check) return <Loading />;
+// 		return (
+// 			<div className="App">
+// 			<div className="App-scrollButtons">
+// 			<button type="button" className="App-button" onClick={this.scrollToTop}><FontAwesomeIcon icon={faArrowUp} /></button>
+// 			<button type="button" className="App-button" onClick={this.scrollToBottom}><FontAwesomeIcon icon={faArrowDown} /></button>
+// 			</div>
+// 			<Router>
+// 				<header className="App-header">
+// 				<a className="App-link" href="/">
+// 				PluralKit Web
+// 				</a>
+// 				<div className="App-buttons">
+// 				{this.state.user &&
+// 					<button className="App-button" onClick={()=>this.logOut()}>Logout</button>
+// 				}
+// 				</div>
+// 				</header>
+// 				{this.state.user ?
+// 					<Route exact path="/" render={(props)=> <Dashboard {...props} user={this.state.user} />} /> :
+// 					<Route exact path="/" render={(props)=> 
+// 						<Frag>
+// 							<div className="App-login">
+// 							<p>Enter your token below. You can get this with "pk;token"</p>
+// 							<p style={{color: "red"}}>{this.state.submitted && !this.state.user ? "Something went wrong, please try again." : ""}</p>
+// 							<form style={{textAlign: "center"}} onSubmit={this.logIn}>
+// 								<input type="text"
+// 								placeholder="token"
+// 				            	onChange = {(event,newValue) => {this.setState({token:event.target.value})}}
+// 				            	/>
+// 				            <button type="submit" className="App-button">Submit</button>
+// 							</form>
+// 							</div>
+// 						</Frag>
+// 					}
+// 					/>
+// 				}
 				
-				<Route path="/profile/:id" component={Profile} />
-			</Router>
-			<footer className="App-footer" ref={(el) => this.footerRef = el}>
-				<a className="App-link" href="https://github.com/xSke/PluralKit">PluralKit by @xSke</a> | <a className="App-link" href="https://github.com/greysdawn/pluralkit-web">Site by @greysdawn</a>
-			</footer>
-			</div>
-			);
+// 				<Route path="/profile/:id" component={Profile} />
+// 			</Router>
+// 			<footer className="App-footer" ref={(el) => this.footerRef = el}>
+// 				<a className="App-link" href="https://github.com/xSke/PluralKit">PluralKit by @xSke</a> | <a className="App-link" href="https://github.com/greysdawn/pluralkit-web">Site by @greysdawn</a>
+// 			</footer>
+// 			</div>
+// 			);
 	}
 }
 
