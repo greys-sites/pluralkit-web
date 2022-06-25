@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "https://pkapi.astrid.fun",
   "dependencies": {
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "react": "^16.8.5",
     "react-cookies": "^0.1.0",
     "react-dom": "^16.8.5",
