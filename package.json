@@ -16,7 +16,7 @@
     "react-cookies": "^0.1.0",
     "react-dom": "^16.8.5",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8",
+    "react-scripts": "5.0.1",
     "sanitize-html": "^2.3.2",
     "showdown": "^1.9.1"
   },
